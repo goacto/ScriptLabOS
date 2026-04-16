@@ -6,6 +6,14 @@ ScriptLab is a web application that lets users visualize and edit their daily sc
 
 This file is **both** the canonical spec for engineering *and* the seed config used to initialize a new user's environment at onboarding.
 
+## Living docs
+
+Three companion files are living — every PR that changes behavior, visuals, or architecture **must** update the relevant one(s):
+
+- [`CHANGELOG.md`](./CHANGELOG.md) — what shipped, organised by version. Add entries under `[Unreleased]` in every PR.
+- [`BACKLOG.md`](./BACKLOG.md) — what we've deferred. Move items out when they ship, add items in when you discover them.
+- [`ENGINEERING_GUIDE.md`](./ENGINEERING_GUIDE.md) — "From 101 to Principal" textbook on the codebase. Update the level(s) affected by any architectural or feature change.
+
 ---
 
 ## 1. Core Metaphor
