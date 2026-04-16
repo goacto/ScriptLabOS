@@ -10,12 +10,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
-_(Nothing queued yet — add your entry here when you open a PR.)_
-
 ### Added
-### Changed
-### Fixed
-### Removed
+- **Achievement toasts** — transient Matrix-style toast in the bottom-right when a new achievement unlocks (`components/AchievementToasts.tsx`, mounted once in the root layout). Past achievements are seeded on mount so you don't get re-toasted on page load.
+- **Day Builder validation** — highlights overlapping slots in amber, shows a warning strip with overlap count and total-duration overflow (>24h), and surfaces scheduled minutes in the header.
+- **Wake-up → template recommendations** — Library now shows a "recommended for your wake-ups" band when the user's wake-up statements, values, or goals keyword-match any unowned template. Lives in `lib/recommendations.ts`; pure function, no LLM cost.
 
 ---
 

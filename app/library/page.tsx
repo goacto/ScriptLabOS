@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import FileTree from "@/components/FileTree";
@@ -8,6 +8,7 @@ import ScriptEditor from "@/components/ScriptEditor";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { makeGss, typeLabel } from "@/lib/gss";
 import { TEMPLATES, templateToGss } from "@/lib/templates";
+import { recommendTemplates } from "@/lib/recommendations";
 import type { GssType } from "@/lib/types";
 
 export default function LibraryPage() {
@@ -23,6 +24,18 @@ export default function LibraryPage() {
   useEffect(() => {
     if (!selectedId && state.scripts[0]) setSelectedId(state.scripts[0].id);
   }, [state.scripts, selectedId]);
+
+  const ownedTitles = useMemo(
+    () => new Set(state.scripts.map((s) => s.title)),
+    [state.scripts]
+  );
+  const recommendations = useMemo(
+    () =>
+      state.profile
+        ? recommendTemplates(state.profile, ownedTitles)
+        : [],
+    [state.profile, ownedTitles]
+  );
 
   if (!hydrated || !state.profile) return null;
 
@@ -73,6 +86,44 @@ export default function LibraryPage() {
             {showTemplates ? "hide" : "import"} templates
           </button>
         </div>
+
+        {recommendations.length > 0 && (
+          <div className="panel p-4 mb-4 border-matrix/40">
+            <div className="text-xs text-muted uppercase tracking-widest mb-3">
+              // recommended for your wake-ups
+            </div>
+            <div className="grid md:grid-cols-2 gap-2">
+              {recommendations.map((r) => (
+                <button
+                  key={r.template.id}
+                  className="panel p-3 text-left hover:shadow-glow-sm border-matrix/40"
+                  onClick={() => {
+                    const s = templateToGss(r.template);
+                    dispatch({ type: "addScript", script: s });
+                    setSelectedId(s.id);
+                  }}
+                >
+                  <div className="flex justify-between">
+                    <span className="text-matrix">{r.template.title}</span>
+                    <span className="text-xs text-matrix-dim">
+                      ★ {r.score} match
+                    </span>
+                  </div>
+                  <div className="text-xs text-ink/70 mt-1">
+                    {r.template.intent}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {r.matched.slice(0, 4).map((m) => (
+                      <span key={m} className="tag">
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {showTemplates && (
           <div className="panel p-4 mb-4">

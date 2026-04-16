@@ -10,9 +10,7 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 
 - [ ] **Packages view** — UI to bundle `.gss` files into named packages (schema already exists in `lib/types.ts`, no UI yet).
 - [ ] **Keyboard shortcuts** — `⌘K` command palette for "new .gss", "jump to tester", "compile day".
-- [ ] **Wake-up → template matching** — keyword-match each wake-up statement against template tags and surface suggestions in the Library ("recommended for you").
-- [ ] **Day Builder validation** — warn on overlapping slots and total duration >24h.
-- [ ] **Achievement toasts** — show a transient Matrix-style toast when an achievement unlocks instead of the user discovering it on the HUD.
+- [ ] **Tests** — first unit coverage for `gamification.ts`, `recommendations.ts`, and the reducer.
 
 ## Next (soon)
 

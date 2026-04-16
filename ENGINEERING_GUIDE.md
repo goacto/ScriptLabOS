@@ -137,7 +137,15 @@ New actions should follow the pattern: pure reducer, no I/O, no `Date.now()` in 
 4. Add the route to the `NAV` array in `components/NavBar.tsx`.
 5. Build any new components under `components/` — keep them presentational and accept callbacks rather than dispatch directly where possible (see `FileTree`, `ScriptEditor` for the pattern).
 
-### 3.3 Adding a new `.gss` type
+### 3.3 Cross-cutting UI: toasts
+
+Transient notifications live in `components/AchievementToasts.tsx`, mounted once in the root layout next to `{children}`. It watches `state.achievements` and renders any newly-unlocked ones for ~4.5s. The seed pattern (`seenRef` initialised from current achievements on first render) is what prevents re-toasting past achievements on page refresh — reuse this pattern if you add any other "unlocked" notification.
+
+### 3.4 Recommendations
+
+`lib/recommendations.ts#recommendTemplates(profile, ownedTitles)` keyword-scores templates against tokens extracted from the user's wake-up statements, values, and goals. Pure, no network. The Library shows the top 4 unowned matches above the manual import drawer. If you add more template metadata (e.g. `forValues: string[]`), extend `templateTokens` rather than adding new scoring logic.
+
+### 3.5 Adding a new `.gss` type
 
 1. Add to `GssType` in `lib/types.ts`.
 2. Extend `typeLabel`, `typeIcon`, `typeColor` in `lib/gss.ts`.
