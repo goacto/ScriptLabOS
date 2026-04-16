@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
-import PomodoroTimer from "@/components/PomodoroTimer";
+import PackagesView from "@/components/PackagesView";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 
-export default function TesterPage() {
+export default function PackagesPage() {
   const { state, hydrated } = useScriptLab();
   const router = useRouter();
 
@@ -18,9 +18,7 @@ export default function TesterPage() {
   return (
     <>
       <NavBar />
-      <Suspense fallback={null}>
-        <PomodoroTimer />
-      </Suspense>
+      <PackagesView />
     </>
   );
 }

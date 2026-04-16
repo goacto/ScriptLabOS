@@ -8,9 +8,9 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 
 ## Now (next up)
 
-- [ ] **Packages view** — UI to bundle `.gss` files into named packages (schema already exists in `lib/types.ts`, no UI yet).
-- [ ] **Keyboard shortcuts** — `⌘K` command palette for "new .gss", "jump to tester", "compile day".
-- [ ] **Tests** — first unit coverage for `gamification.ts`, `recommendations.ts`, and the reducer.
+- [ ] **Reducer tests** — first commit covered the pure helpers; add coverage for the `ScriptLabProvider` reducer (recordRun XP, deleteScript referential cleanup, passDay idempotency, achievement de-dup).
+- [ ] **Wake-up echo on the splash** — show a random wake-up statement under the boot log so the OS feels personal from second one.
+- [ ] **Edit wake-up statements / values / goals after onboarding** — currently stuck at the values entered during install; expose an editor on the dashboard.
 
 ## Next (soon)
 
@@ -30,7 +30,6 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 
 ## Tech debt
 
-- [ ] **Tests** — no Jest/Vitest suite yet. Add unit coverage for `gamification.ts`, reducer in `ScriptLabProvider.tsx`, and `gss.ts` helpers.
 - [ ] **E2E** — a Playwright smoke test that runs the onboarding → create script → start timer → compile day flow.
 - [ ] **ESLint config** — `next lint` currently uses Next's defaults; tighten with `@typescript-eslint` strict rules.
 - [ ] **A11y pass** — the IDE look is keyboard-unfriendly in places (file tree focus ring, modal dialogs). Audit with axe.

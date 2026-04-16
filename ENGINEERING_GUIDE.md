@@ -35,8 +35,11 @@ npm run dev       # http://localhost:3000
 | --- | --- |
 | `/dashboard` | Build Status HUD — XP, streak, script counts, achievements, wake-ups |
 | `/library` | IDE-style `.gss` editor |
-| `/day` | Drag `.gss` onto an hourly timeline → "compile" the day |
-| `/tester` | Pomodoro runner for a selected script |
+| `/packages` | Bundle scripts into named packages |
+| `/day` | Drag `.gss` or 📦 onto an hourly timeline → "compile" the day |
+| `/tester` | Pomodoro runner for a selected script (deep-link via `?id=`) |
+
+Press `⌘K` (or `Ctrl+K`) anywhere to open the command palette.
 
 **Useful scripts**
 
@@ -45,6 +48,8 @@ npm run dev         # dev server
 npm run build       # production build (Next's static prerender)
 npm run typecheck   # tsc --noEmit
 npm run lint        # next lint
+npm test            # vitest run
+npm run test:watch  # vitest watch
 ```
 
 **Where the source lives**
@@ -144,6 +149,18 @@ Transient notifications live in `components/AchievementToasts.tsx`, mounted once
 ### 3.4 Recommendations
 
 `lib/recommendations.ts#recommendTemplates(profile, ownedTitles)` keyword-scores templates against tokens extracted from the user's wake-up statements, values, and goals. Pure, no network. The Library shows the top 4 unowned matches above the manual import drawer. If you add more template metadata (e.g. `forValues: string[]`), extend `templateTokens` rather than adding new scoring logic.
+
+### 3.4a Packages
+
+Packages are simple containers — `{ id, title, name, scriptIds[] }` in `lib/types.ts`. The Packages view (`app/packages/page.tsx` + `components/PackagesView.tsx`) is the only place that creates/edits them. The Day Builder accepts both `scriptId` and `packageId` in a slot; total minutes and projected XP sum across the package's scripts. When you delete a script the reducer also strips its id from every package's `scriptIds` (see `deleteScript` in `ScriptLabProvider`) — keep that invariant if you add new cross-references.
+
+### 3.4b Command palette
+
+`components/CommandPalette.tsx` is mounted once in the root layout. It listens for `⌘K`/`Ctrl+K` globally, builds a flat list of commands at render time (route jumps, "new <type>" creators, run-this-script entries derived from `state.scripts`, plus state actions like compile-day / export / reset), filters by query, and runs the first match on `Enter`. To add a command, push it into the `cmds` array — keep them flat, don't introduce a category abstraction until we have >25 entries.
+
+### 3.4c Tests
+
+`vitest` runs the suite in `lib/**/*.test.ts`. `vitest.config.ts` aliases `@` so production `import "@/lib/..."` paths work in tests. Pattern: arrange a tiny state via the helpers (`makeGss`, `emptyState`), call the pure function, assert. Keep test files next to the unit they cover. When you next add the reducer test, import `reducer` directly — it's already a pure function with no I/O.
 
 ### 3.5 Adding a new `.gss` type
 

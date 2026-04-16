@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ScriptLabProvider } from "@/lib/ScriptLabProvider";
 import AchievementToasts from "@/components/AchievementToasts";
+import CommandPalette from "@/components/CommandPalette";
 
 export const metadata: Metadata = {
   title: "ScriptLab by GOACTO",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <ScriptLabProvider>
           {children}
           <AchievementToasts />
+          <CommandPalette />
         </ScriptLabProvider>
       </body>
     </html>

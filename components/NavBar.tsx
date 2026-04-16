@@ -9,6 +9,7 @@ import { exportState, resetState } from "@/lib/storage";
 const NAV = [
   { href: "/dashboard", label: "HUD" },
   { href: "/library", label: "Library" },
+  { href: "/packages", label: "Packages" },
   { href: "/day", label: "Day Builder" },
   { href: "/tester", label: "Tester" },
 ];
@@ -78,6 +79,9 @@ export default function NavBar() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-3">
+          <span className="text-xs text-muted hidden md:inline">
+            ⌘K
+          </span>
           <span className="text-xs text-muted">
             <span className="text-matrix">{current.name}</span> · {state.xp} XP
             · 🔥 {state.streak}

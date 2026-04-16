@@ -27,42 +27,67 @@ export default function DayBuilder() {
       status: "draft",
     }
   );
-  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [drag, setDrag] = useState<
+    { kind: "script" | "package"; id: string } | null
+  >(null);
 
   const scriptById = useMemo(
     () => Object.fromEntries(state.scripts.map((s) => [s.id, s])),
     [state.scripts]
   );
+  const pkgById = useMemo(
+    () => Object.fromEntries(state.packages.map((p) => [p.id, p])),
+    [state.packages]
+  );
 
-  const totalXp = exe.slots.reduce((acc, s) => {
-    const script = s.scriptId ? scriptById[s.scriptId] : null;
-    return script ? acc + xpForRun(script, script.durationMin) : acc;
-  }, 0);
+  const slotMinutes = (slot: ExecutableSlot): number => {
+    if (slot.scriptId && scriptById[slot.scriptId])
+      return scriptById[slot.scriptId].durationMin;
+    if (slot.packageId && pkgById[slot.packageId]) {
+      return pkgById[slot.packageId].scriptIds.reduce(
+        (acc, id) => acc + (scriptById[id]?.durationMin ?? 0),
+        0
+      );
+    }
+    return 0;
+  };
 
-  const totalMin = exe.slots.reduce((acc, s) => {
-    const script = s.scriptId ? scriptById[s.scriptId] : null;
-    return script ? acc + script.durationMin : acc;
-  }, 0);
+  const slotXp = (slot: ExecutableSlot): number => {
+    if (slot.scriptId && scriptById[slot.scriptId]) {
+      const s = scriptById[slot.scriptId];
+      return xpForRun(s, s.durationMin);
+    }
+    if (slot.packageId && pkgById[slot.packageId]) {
+      return pkgById[slot.packageId].scriptIds.reduce((acc, id) => {
+        const s = scriptById[id];
+        return s ? acc + xpForRun(s, s.durationMin) : acc;
+      }, 0);
+    }
+    return 0;
+  };
 
-  // A slot overlaps the next if its script's duration spills past the next
+  const totalXp = exe.slots.reduce((acc, s) => acc + slotXp(s), 0);
+  const totalMin = exe.slots.reduce((acc, s) => acc + slotMinutes(s), 0);
+
+  // A slot overlaps the next if its content's duration spills past the next
   // slot's start time (each slot is 60 min apart in this grid).
   const overlaps = useMemo(() => {
     const set = new Set<number>();
     for (let i = 0; i < exe.slots.length; i++) {
-      const slot = exe.slots[i];
-      const script = slot.scriptId ? scriptById[slot.scriptId] : null;
-      if (!script) continue;
-      const slotsNeeded = Math.ceil(script.durationMin / 60);
+      const minutes = slotMinutes(exe.slots[i]);
+      if (!minutes) continue;
+      const slotsNeeded = Math.ceil(minutes / 60);
       for (let j = 1; j < slotsNeeded; j++) {
         const other = exe.slots[i + j];
-        if (other?.scriptId) {
+        if (other?.scriptId || other?.packageId) {
           set.add(i);
           set.add(i + j);
         }
       }
     }
     return set;
-  }, [exe.slots, scriptById]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [exe.slots, scriptById, pkgById]);
 
   const warnings = useMemo(() => {
     const w: string[] = [];
@@ -116,17 +141,37 @@ export default function DayBuilder() {
       <div className="grid md:grid-cols-[260px_1fr] gap-4">
         <div className="panel p-3 h-fit sticky top-20">
           <div className="text-xs text-muted uppercase tracking-widest mb-2">
-            // drag a .gss
+            // drag a .gss or 📦
           </div>
           <ul className="space-y-1 text-sm max-h-[70vh] overflow-y-auto">
+            {state.packages.map((p) => {
+              const min = p.scriptIds.reduce(
+                (a, id) => a + (scriptById[id]?.durationMin ?? 0),
+                0
+              );
+              return (
+                <li
+                  key={p.id}
+                  draggable
+                  onDragStart={() => setDrag({ kind: "package", id: p.id })}
+                  onDragEnd={() => setDrag(null)}
+                  className="px-2 py-1 border border-matrix/30 rounded hover:bg-matrix/10 cursor-grab"
+                >
+                  📦 {p.title}
+                  <span className="text-xs text-muted ml-2">
+                    {p.scriptIds.length} · {min}m
+                  </span>
+                </li>
+              );
+            })}
             {state.scripts
               .filter((s) => s.type !== "bug" && s.type !== "virus")
               .map((s) => (
                 <li
                   key={s.id}
                   draggable
-                  onDragStart={() => setDraggingId(s.id)}
-                  onDragEnd={() => setDraggingId(null)}
+                  onDragStart={() => setDrag({ kind: "script", id: s.id })}
+                  onDragEnd={() => setDrag(null)}
                   className="px-2 py-1 border border-matrix/20 rounded hover:bg-matrix/10 cursor-grab"
                 >
                   <span className="text-[10px] text-muted mr-1">
@@ -145,19 +190,25 @@ export default function DayBuilder() {
           <ul>
             {exe.slots.map((slot, i) => {
               const script = slot.scriptId ? scriptById[slot.scriptId] : null;
+              const pkg = slot.packageId ? pkgById[slot.packageId] : null;
               return (
                 <li
                   key={i}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => {
-                    if (draggingId) {
-                      setSlot(i, { ...slot, scriptId: draggingId });
-                      setDraggingId(null);
+                    if (drag) {
+                      setSlot(i, {
+                        time: slot.time,
+                        scriptId: drag.kind === "script" ? drag.id : undefined,
+                        packageId:
+                          drag.kind === "package" ? drag.id : undefined,
+                      });
+                      setDrag(null);
                     }
                   }}
                   className={`flex items-center gap-3 border-b border-matrix/10 py-2 ${
                     overlaps.has(i) ? "bg-amber-bug/10" : ""
-                  } ${draggingId ? "hover:bg-matrix/10" : ""}`}
+                  } ${drag ? "hover:bg-matrix/10" : ""}`}
                 >
                   <span className="text-matrix-dim w-14 text-sm">
                     {slot.time}
@@ -180,9 +231,25 @@ export default function DayBuilder() {
                         clear
                       </button>
                     </>
+                  ) : pkg ? (
+                    <>
+                      <span className="flex-1 text-sm">
+                        📦 {pkg.title}
+                        <span className="text-xs text-muted ml-2">
+                          ({pkg.scriptIds.length} scripts ·{" "}
+                          {slotMinutes(slot)}m)
+                        </span>
+                      </span>
+                      <button
+                        className="btn btn-danger !py-0.5 !px-2 text-xs"
+                        onClick={() => setSlot(i, { time: slot.time })}
+                      >
+                        clear
+                      </button>
+                    </>
                   ) : (
                     <span className="flex-1 text-xs text-muted italic">
-                      — empty — drop a script here —
+                      — empty — drop a script or 📦 here —
                     </span>
                   )}
                 </li>

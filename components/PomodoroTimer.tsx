@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon, typeLabel } from "@/lib/gss";
 import { xpForRun } from "@/lib/gamification";
@@ -13,10 +14,18 @@ function fmt(s: number) {
 
 export default function PomodoroTimer() {
   const { state, dispatch } = useScriptLab();
+  const searchParams = useSearchParams();
+  const queryId = searchParams.get("id");
   const [scriptId, setScriptId] = useState<string | null>(
-    state.scripts.find((s) => s.type !== "bug" && s.type !== "virus")?.id ??
+    queryId ??
+      state.scripts.find((s) => s.type !== "bug" && s.type !== "virus")?.id ??
       null
   );
+
+  useEffect(() => {
+    if (queryId && queryId !== scriptId) setScriptId(queryId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryId]);
   const script = state.scripts.find((s) => s.id === scriptId) ?? null;
   const [remaining, setRemaining] = useState(
     (script?.durationMin ?? 25) * 60
