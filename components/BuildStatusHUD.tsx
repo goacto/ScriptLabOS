@@ -84,8 +84,16 @@ export default function BuildStatusHUD() {
 
       {wakeUps.length > 0 && (
         <div className="panel p-5">
-          <div className="text-xs text-muted uppercase tracking-widest mb-3">
-            // wake-up statements
+          <div className="flex justify-between items-baseline mb-3">
+            <div className="text-xs text-muted uppercase tracking-widest">
+              // wake-up statements
+            </div>
+            <Link
+              href="/profile"
+              className="text-xs text-matrix hover:crt-text"
+            >
+              edit →
+            </Link>
           </div>
           <ul className="space-y-2">
             {wakeUps.map((w) => (

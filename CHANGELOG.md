@@ -11,6 +11,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [Unreleased]
 
 ### Added
+- **Profile editor (`/profile`)** — edit developer name, wake-up statements (add / remove), core values, and goals after onboarding. Linked from the nav bar, the HUD's "wake-up statements" panel, and the command palette. Writes through the existing `setProfile` action; recommendations and the splash echo update on next render.
+- **Splash wake-up echo** — after the boot log finishes, the splash renders one of the user's wake-up statements in italic CRT text as a "why you booted" banner. Picked at random on each visit.
+- **Reducer extracted to `lib/reducer.ts`** — pure `reducer(state, action)` export with an exported `Action` union. `ScriptLabProvider` is now a thin shell around it.
+- **Reducer test suite** — 9 tests covering addScript/updateScript, deleteScript referential cleanup across packages, recordRun (no-op + XP award + bail), passDay (streak + achievement-once), reset, and importAll.
+
+### Added (previous)
 - **Achievement toasts** — transient Matrix-style toast in the bottom-right when a new achievement unlocks (`components/AchievementToasts.tsx`, mounted once in the root layout). Past achievements are seeded on mount so you don't get re-toasted on page load.
 - **Day Builder validation** — highlights overlapping slots in amber, shows a warning strip with overlap count and total-duration overflow (>24h), and surfaces scheduled minutes in the header.
 - **Wake-up → template recommendations** — Library now shows a "recommended for your wake-ups" band when the user's wake-up statements, values, or goals keyword-match any unowned template. Lives in `lib/recommendations.ts`; pure function, no LLM cost.
@@ -19,7 +25,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - **First test suite (Vitest)** — 21 tests covering `lib/gamification.ts` (XP, levels, achievements, streak), `lib/recommendations.ts` (token matching, ownership filtering), and `lib/gss.ts` (uid, slugify, makeGss). Run with `npm test` (one-shot) or `npm run test:watch`.
 
 ### Changed
-- Nav bar shows the `⌘K` hint on desktop widths and now includes a "Packages" entry.
+- Nav bar shows the `⌘K` hint on desktop widths and now includes "Packages" and "Profile" entries.
 
 ---
 

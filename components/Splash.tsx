@@ -18,6 +18,15 @@ export default function Splash() {
   const { state, hydrated } = useScriptLab();
   const [shown, setShown] = useState(0);
   const [done, setDone] = useState(false);
+  const [echo, setEcho] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    const wakeUps = state.profile?.wakeUps ?? [];
+    if (wakeUps.length === 0) return;
+    const pick = wakeUps[Math.floor(Math.random() * wakeUps.length)];
+    setEcho(pick.text);
+  }, [hydrated, state.profile]);
 
   useEffect(() => {
     const i = setInterval(() => {
@@ -67,6 +76,16 @@ export default function Splash() {
             <span className="text-matrix animate-blink">_</span>
           )}
         </div>
+        {done && echo && (
+          <div className="mt-8 w-full max-w-md text-left">
+            <div className="text-[10px] text-matrix-dim uppercase tracking-[0.35em] mb-2">
+              // why you booted
+            </div>
+            <div className="text-ink/90 text-sm md:text-base italic crt-text">
+              &ldquo;{echo}&rdquo;
+            </div>
+          </div>
+        )}
         {done && (
           <button
             className="btn btn-primary mt-8"

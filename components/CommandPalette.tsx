@@ -51,6 +51,7 @@ export default function CommandPalette() {
       { id: "go-packages", label: "Go to Packages", hint: "/packages", run: () => router.push("/packages") },
       { id: "go-day", label: "Go to Day Builder", hint: "/day", run: () => router.push("/day") },
       { id: "go-tester", label: "Go to Script Tester", hint: "/tester", run: () => router.push("/tester") },
+      { id: "go-profile", label: "Edit profile (wake-ups, values, goals)", hint: "/profile", run: () => router.push("/profile") },
       { id: "new-baseline", label: "New baseline .gss", hint: "[OS]", run: () => newScript("baseline") },
       { id: "new-update", label: "New update .gss", hint: "[UPD]", run: () => newScript("update") },
       { id: "new-upgrade", label: "New upgrade .gss", hint: "[UP+]", run: () => newScript("upgrade") },

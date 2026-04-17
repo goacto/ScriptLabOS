@@ -8,9 +8,9 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 
 ## Now (next up)
 
-- [ ] **Reducer tests** — first commit covered the pure helpers; add coverage for the `ScriptLabProvider` reducer (recordRun XP, deleteScript referential cleanup, passDay idempotency, achievement de-dup).
-- [ ] **Wake-up echo on the splash** — show a random wake-up statement under the boot log so the OS feels personal from second one.
-- [ ] **Edit wake-up statements / values / goals after onboarding** — currently stuck at the values entered during install; expose an editor on the dashboard.
+- [ ] **Achievement toast polish** — stacking + small slide-in animation; currently they just appear.
+- [ ] **Splash "skip" affordance** — a subtle `[press any key]` hint during the boot sequence for returning users who don't want to wait the full 2s.
+- [ ] **Day Builder: apply a package across its own duration** — when you drop a 75-min package, claim the right number of slots instead of just one.
 
 ## Next (soon)
 

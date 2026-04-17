@@ -38,6 +38,7 @@ npm run dev       # http://localhost:3000
 | `/packages` | Bundle scripts into named packages |
 | `/day` | Drag `.gss` or 📦 onto an hourly timeline → "compile" the day |
 | `/tester` | Pomodoro runner for a selected script (deep-link via `?id=`) |
+| `/profile` | Edit name, wake-ups, values, goals after onboarding |
 
 Press `⌘K` (or `Ctrl+K`) anywhere to open the command palette.
 
@@ -73,6 +74,8 @@ All state is held in a single `ScriptLabProvider` (React Context + `useReducer`)
 1. On mount, reads `localStorage` via `loadState()` and dispatches `{ type: "hydrate", state }`.
 2. Wraps every state change in a `useEffect` that re-serialises to `localStorage` via `saveState()`.
 3. Exposes `{ state, dispatch, hydrated }` through `useScriptLab()`.
+
+The reducer itself lives in `lib/reducer.ts` as a pure function with an exported `Action` union. Keep it pure — the tests in `lib/reducer.test.ts` import it directly and rely on no I/O.
 
 Routes are `"use client"` components that read `useScriptLab()` and early-return `null` until `hydrated` is true (prevents SSR/CSR mismatch).
 

@@ -12,6 +12,7 @@ const NAV = [
   { href: "/packages", label: "Packages" },
   { href: "/day", label: "Day Builder" },
   { href: "/tester", label: "Tester" },
+  { href: "/profile", label: "Profile" },
 ];
 
 export default function NavBar() {
