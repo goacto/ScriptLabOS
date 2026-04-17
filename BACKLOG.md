@@ -9,7 +9,6 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 ## Now (next up)
 
 - [ ] **Achievement toast polish** — stacking + small slide-in animation; currently they just appear.
-- [ ] **Splash "skip" affordance** — a subtle `[press any key]` hint during the boot sequence for returning users who don't want to wait the full 2s.
 - [ ] **Day Builder: apply a package across its own duration** — when you drop a 75-min package, claim the right number of slots instead of just one.
 
 ## Next (soon)

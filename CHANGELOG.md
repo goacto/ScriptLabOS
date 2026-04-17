@@ -26,6 +26,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Nav bar shows the `⌘K` hint on desktop widths and now includes "Packages" and "Profile" entries.
+- **Splash no longer auto-advances.** After the boot sequence it waits for the user to click `[ enter ]`, press `Enter`, or press `Space`. The button auto-focuses and a subtle "press enter or space" hint sits below it.
 
 ---
 

@@ -44,10 +44,15 @@ export default function Splash() {
 
   useEffect(() => {
     if (!done || !hydrated) return;
-    const t = setTimeout(() => {
-      router.push(state.profile ? "/dashboard" : "/onboard");
-    }, 600);
-    return () => clearTimeout(t);
+    const advance = () => router.push(state.profile ? "/dashboard" : "/onboard");
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        advance();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [done, hydrated, state.profile, router]);
 
   return (
@@ -87,14 +92,20 @@ export default function Splash() {
           </div>
         )}
         {done && (
-          <button
-            className="btn btn-primary mt-8"
-            onClick={() =>
-              router.push(state.profile ? "/dashboard" : "/onboard")
-            }
-          >
-            [ enter ]
-          </button>
+          <div className="mt-8 flex flex-col items-center gap-2">
+            <button
+              autoFocus
+              className="btn btn-primary"
+              onClick={() =>
+                router.push(state.profile ? "/dashboard" : "/onboard")
+              }
+            >
+              [ enter ]
+            </button>
+            <div className="text-[10px] text-muted tracking-[0.3em]">
+              press enter or space
+            </div>
+          </div>
         )}
       </div>
     </div>
