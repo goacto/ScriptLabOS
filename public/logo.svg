@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60" width="220" height="60" fill="none">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#00ff9c"/>
+      <stop offset="1" stop-color="#4dffbc"/>
+    </linearGradient>
+  </defs>
+  <g font-family="JetBrains Mono, monospace" font-weight="700">
+    <text x="0" y="40" font-size="34" fill="url(#g)">&lt;/&gt;</text>
+    <text x="60" y="40" font-size="28" fill="#d6fff0">ScriptLab</text>
+    <text x="60" y="55" font-size="10" fill="#00b36b" letter-spacing="3">BY  GOACTO</text>
+  </g>
+</svg>
