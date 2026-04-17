@@ -6,7 +6,7 @@ import XPBar from "./XPBar";
 import { todayStr } from "@/lib/gamification";
 
 export default function BuildStatusHUD() {
-  const { state, dispatch } = useScriptLab();
+  const { state } = useScriptLab();
   const today = todayStr();
   const todaysExe = state.executables.find((e) => e.date === today);
   const status = todaysExe?.status ?? "draft";
@@ -16,13 +16,48 @@ export default function BuildStatusHUD() {
   const updates = state.scripts.filter((s) => s.type === "update").length;
   const baseline = state.scripts.filter((s) => s.type === "baseline").length;
 
+  // Calculate execution fidelity for today
+  const plannedScriptIds = todaysExe?.slots
+    ? Array.from(
+        new Set(
+          todaysExe.slots
+            .filter((s) => s.scriptId)
+            .map((s) => s.scriptId as string)
+        )
+      )
+    : [];
+
+  const completedTodayScriptIds = state.scripts
+    .filter((script) => {
+      const todayRuns = script.runs.filter(
+        (run) =>
+          run.completed &&
+          new Date(run.at).toISOString().slice(0, 10) === today
+      );
+      return todayRuns.length > 0;
+    })
+    .map((s) => s.id);
+
+  const executionFidelity =
+    plannedScriptIds.length > 0
+      ? Math.round(
+          (completedTodayScriptIds.filter((id) =>
+            plannedScriptIds.includes(id)
+          ).length /
+            plannedScriptIds.length) *
+            100
+        )
+      : 0;
+
   const statusColor =
-    status === "passed"
+    status === "complete"
       ? "text-matrix"
-      : status === "failed"
-      ? "text-virus"
-      : status === "running"
-      ? "text-amber-bug"
+      : status === "in-progress"
+      ? executionFidelity >= 80
+        ? "text-matrix"
+        : executionFidelity >= 50
+        ? "text-amber-bug"
+        : "text-virus"
       : "text-muted";
 
   const wakeUps = state.profile?.wakeUps ?? [];
@@ -40,17 +75,34 @@ export default function BuildStatusHUD() {
 
       <div className="grid md:grid-cols-3 gap-4">
         <div className="panel p-5">
-          <div className="text-xs text-muted mb-1">today's build</div>
-          <div className={`text-2xl font-bold ${statusColor}`}>
-            {status.toUpperCase()}
+          <div className="text-xs text-muted mb-1">today's build status</div>
+          <div className={`text-2xl font-bold ${statusColor} capitalize`}>
+            {status === "complete" ? "✓ Shipped" : status}
           </div>
           <div className="text-xs text-muted mt-2">{today}</div>
-          <button
-            className="btn btn-primary mt-4 w-full"
-            onClick={() => dispatch({ type: "passDay" })}
-          >
-            ⏎ compile &amp; ship day
-          </button>
+          {status === "in-progress" && plannedScriptIds.length > 0 && (
+            <div className="mt-3">
+              <div className="text-xs text-muted mb-1">Build Quality</div>
+              <div className="flex items-baseline gap-2">
+                <div className={`text-xl font-bold ${executionFidelity >= 80 ? "text-matrix" : executionFidelity >= 50 ? "text-amber-bug" : "text-virus"}`}>
+                  {executionFidelity}%
+                </div>
+                <div className="text-xs text-muted">
+                  {completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}/{plannedScriptIds.length} scripts
+                </div>
+              </div>
+            </div>
+          )}
+          {status === "complete" && todaysExe?.reflection && (
+            <div className="mt-3 text-xs text-matrix">
+              ✓ Daily reflection logged
+            </div>
+          )}
+          <Link href="/day" className="btn btn-primary mt-4 w-full block text-center">
+            {status === "draft" && "📝 Plan Today"}
+            {status === "in-progress" && "🎯 Continue Building"}
+            {status === "complete" && "👁 View Build"}
+          </Link>
         </div>
         <div className="panel p-5">
           <div className="text-xs text-muted mb-1">level</div>

@@ -41,11 +41,20 @@ export interface ExecutableSlot {
   packageId?: string;
 }
 
+export interface DailyReflection {
+  wins: string;
+  challenges: string;
+  tomorrowFocus: string;
+}
+
 export interface Executable {
   id: string;
   date: string;
   slots: ExecutableSlot[];
-  status: "draft" | "running" | "passed" | "failed";
+  status: "draft" | "in-progress" | "complete";
+  completedScriptIds?: string[]; // Scripts actually completed during the day
+  reflection?: DailyReflection; // End-of-day reflection
+  completedAt?: string; // When the day was shipped
 }
 
 export interface WakeUpStatement {

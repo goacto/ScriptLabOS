@@ -47,11 +47,15 @@ export default function AchievementToasts() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none">
-      {queue.map((t) => (
+      {queue.map((t, index) => (
         <div
           key={`${t.id}-${t.shownAt}`}
           role="status"
-          className="panel px-4 py-3 min-w-[260px] border-matrix shadow-glow pointer-events-auto animate-[flicker_2.5s_infinite]"
+          style={{
+            animation: "slideInRight 0.4s ease-out, flicker 2.5s infinite",
+            animationDelay: `${index * 0.1}s`,
+          }}
+          className="panel px-4 py-3 min-w-[260px] border-matrix shadow-glow pointer-events-auto"
         >
           <div className="text-[10px] text-matrix-dim uppercase tracking-[0.35em]">
             // achievement unlocked

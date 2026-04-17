@@ -51,19 +51,21 @@ export default function CommandPalette() {
       { id: "go-packages", label: "Go to Packages", hint: "/packages", run: () => router.push("/packages") },
       { id: "go-day", label: "Go to Day Builder", hint: "/day", run: () => router.push("/day") },
       { id: "go-tester", label: "Go to Script Tester", hint: "/tester", run: () => router.push("/tester") },
+      { id: "go-analytics", label: "Go to Analytics", hint: "/analytics", run: () => router.push("/analytics") },
+      { id: "go-history", label: "Go to History (commit log)", hint: "/history", run: () => router.push("/history") },
       { id: "go-profile", label: "Edit profile (wake-ups, values, goals)", hint: "/profile", run: () => router.push("/profile") },
+      { id: "go-settings", label: "Go to Settings", hint: "/settings", run: () => router.push("/settings") },
       { id: "new-baseline", label: "New baseline .gss", hint: "[OS]", run: () => newScript("baseline") },
       { id: "new-update", label: "New update .gss", hint: "[UPD]", run: () => newScript("update") },
       { id: "new-upgrade", label: "New upgrade .gss", hint: "[UP+]", run: () => newScript("upgrade") },
       { id: "new-bug", label: "New bug to patch", hint: "[BUG]", run: () => newScript("bug") },
       { id: "new-virus", label: "New virus to overwrite", hint: "[VIR]", run: () => newScript("virus") },
       {
-        id: "compile-day",
-        label: "Compile & ship today",
-        hint: "passDay",
+        id: "go-to-day-builder",
+        label: "Go to Day Builder (plan/complete)",
+        hint: "/day",
         run: () => {
-          dispatch({ type: "passDay" });
-          router.push("/dashboard");
+          router.push("/day");
         },
       },
       {
@@ -77,7 +79,7 @@ export default function CommandPalette() {
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `scriptlab-${new Date().toISOString().slice(0, 10)}.json`;
+          a.download = `scriptlabos-${new Date().toISOString().slice(0, 10)}.json`;
           a.click();
           URL.revokeObjectURL(url);
         },

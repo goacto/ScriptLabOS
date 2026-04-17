@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./app/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
@@ -39,6 +40,7 @@ const config: Config = {
       animation: {
         flicker: "flicker 3s infinite",
         blink: "blink 1s step-end infinite",
+        slideInRight: "slideInRight 0.4s ease-out",
       },
       keyframes: {
         flicker: {
@@ -48,6 +50,10 @@ const config: Config = {
         blink: {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0" },
+        },
+        slideInRight: {
+          "0%": { transform: "translateX(100%)", opacity: "0" },
+          "100%": { transform: "translateX(0)", opacity: "1" },
         },
       },
     },
