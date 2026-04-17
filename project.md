@@ -1,8 +1,8 @@
-# ScriptLab by GOACTO — Project Manifest
+# ScriptLabOS by GOACTO — Project Manifest
 
 > "Your brain is a computer. Each minute of your day is a line of code. You are the developer of your own life."
 
-ScriptLab is a web application that lets users visualize and edit their daily scripts and habits as if they were source files in an IDE. It is part of the GOACTO ecosystem and will later be ported to iOS.
+ScriptLabOS is a web application that lets users visualize and edit their daily scripts and habits as if they were source files in an IDE. It is part of the GOACTO ecosystem and will later be ported to iOS.
 
 This file is **both** the canonical spec for engineering *and* the seed config used to initialize a new user's environment at onboarding.
 
@@ -48,11 +48,11 @@ Three companion files are living — every PR that changes behavior, visuals, or
 
 ### 3.1 Splash (`/`)
 - Matrix digital-rain canvas background
-- Centered GOACTO logo + "ScriptLab" wordmark, "Boot your OS" tagline
+- Centered GOACTO logo + "ScriptLabOS" wordmark, "Boot your OS" tagline
 - Auto-advance after ~2.5s (or on click) to `/onboard` (new user) or `/dashboard` (returning)
 
 ### 3.2 Onboarding Installer Wizard (`/onboard`)
-Styled as an OS installer with steps and a progress bar ("Installing ScriptLab OS...").
+Styled as an OS installer with steps and a progress bar ("Installing ScriptLabOS...").
 1. **Developer Profile** — display name
 2. **Wake-up Statements** — users can add *multiple* statements of the form *"I wake up to X so that Y so that Z"*. Three example statements are pre-seeded as inspiration and can be edited or removed.
 3. **Core Values** — pick/enter top 5

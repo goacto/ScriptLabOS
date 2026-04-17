@@ -130,7 +130,7 @@ export function templateToGss(t: GssTemplate): GssFile {
 }
 
 export const EXAMPLE_WAKE_UPS: string[] = [
-  "I wake up to build ScriptLab so that I can help others author their own lives so that humanity runs on better scripts.",
+  "We wake up to grow ourselves in areas of interest and impact so that we may contribute value to those around us, so that we may accelerate human growth & contribution.",
   "I wake up to train my body so that I have the energy to show up so that my family thrives.",
   "I wake up to learn every day so that I compound knowledge so that my ceiling becomes someone else's floor.",
 ];

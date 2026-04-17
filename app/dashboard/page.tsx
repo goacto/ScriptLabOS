@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import BuildStatusHUD from "@/components/BuildStatusHUD";
+import QuickLogWidget from "@/components/QuickLogWidget";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 
 export default function DashboardPage() {
@@ -19,6 +20,7 @@ export default function DashboardPage() {
     <>
       <NavBar />
       <BuildStatusHUD />
+      <QuickLogWidget />
     </>
   );
 }

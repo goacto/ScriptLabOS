@@ -27,10 +27,18 @@ export default function DayBuilder() {
       status: "draft",
     }
   );
+
+  const [showReview, setShowReview] = useState(false);
+  const [dailyReflection, setDailyReflection] = useState({
+    wins: "",
+    challenges: "",
+    tomorrowFocus: "",
+  });
   const [drag, setDrag] = useState<
     { kind: "script" | "package"; id: string } | null
   >(null);
 
+  // Create lookup maps first
   const scriptById = useMemo(
     () => Object.fromEntries(state.scripts.map((s) => [s.id, s])),
     [state.scripts]
@@ -39,6 +47,35 @@ export default function DayBuilder() {
     () => Object.fromEntries(state.packages.map((p) => [p.id, p])),
     [state.packages]
   );
+
+  // Calculate planned vs completed
+  const plannedScriptIds = useMemo(() => {
+    const ids = new Set<string>();
+    exe.slots.forEach((slot) => {
+      if (slot.scriptId) ids.add(slot.scriptId);
+      if (slot.packageId && pkgById[slot.packageId]) {
+        pkgById[slot.packageId].scriptIds.forEach((id) => ids.add(id));
+      }
+    });
+    return Array.from(ids);
+  }, [exe.slots, pkgById]);
+
+  const completedTodayScriptIds = useMemo(() => {
+    return state.scripts
+      .filter((script) => {
+        const todayRuns = script.runs.filter(
+          (run) =>
+            run.completed &&
+            new Date(run.at).toISOString().slice(0, 10) === today
+        );
+        return todayRuns.length > 0;
+      })
+      .map((s) => s.id);
+  }, [state.scripts, today]);
+
+  const executionFidelity = plannedScriptIds.length > 0
+    ? Math.round((completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length / plannedScriptIds.length) * 100)
+    : 0;
 
   const slotMinutes = (slot: ExecutableSlot): number => {
     if (slot.scriptId && scriptById[slot.scriptId])
@@ -105,38 +142,204 @@ export default function DayBuilder() {
     update({ ...exe, slots: exe.slots.map((s, j) => (i === j ? slot : s)) });
   };
 
-  const ships = () => {
-    update({ ...exe, status: "passed" });
+  const startDay = () => {
+    update({ ...exe, status: "in-progress" });
+  };
+
+  const completeDay = () => {
+    setShowReview(true);
+  };
+
+  const shipDay = () => {
+    const completedScriptIds = state.scripts
+      .filter((script) => {
+        const todayRuns = script.runs.filter(
+          (run) =>
+            run.completed &&
+            new Date(run.at).toISOString().slice(0, 10) === today
+        );
+        return todayRuns.length > 0;
+      })
+      .map((s) => s.id);
+
+    const updatedExe: Executable = {
+      ...exe,
+      status: "complete",
+      completedScriptIds,
+      reflection: dailyReflection,
+      completedAt: new Date().toISOString(),
+    };
+
+    update(updatedExe);
     dispatch({ type: "passDay" });
+    setShowReview(false);
+    setDailyReflection({ wins: "", challenges: "", tomorrowFocus: "" });
   };
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-4">
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl text-matrix crt-text font-bold">
-            /day — today's executable
+            /day — Daily Build Plan
           </h1>
           <div className="text-xs text-muted">
-            {today} · {exe.status} · {totalMin}m scheduled · ~{totalXp} XP if
-            all pass
+            {today} · Status: <span className="capitalize">{exe.status}</span> · {totalMin}m planned · ~{totalXp} XP potential
           </div>
+          {exe.status === "in-progress" && plannedScriptIds.length > 0 && (
+            <div className="text-xs text-matrix mt-1">
+              📊 Execution Fidelity: {executionFidelity}% ({completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}/{plannedScriptIds.length} scripts completed)
+            </div>
+          )}
           {warnings.length > 0 && (
             <div className="text-xs text-amber-bug mt-1">
               ⚠ {warnings.join(" · ")}
             </div>
           )}
         </div>
-        <button
-          className="btn btn-primary"
-          onClick={ships}
-          title={
-            warnings.length ? "warnings present — ship anyway?" : undefined
-          }
-        >
-          ⏎ compile &amp; ship
-        </button>
+        <div className="flex gap-2">
+          {exe.status === "draft" && (
+            <button
+              className="btn btn-primary"
+              onClick={startDay}
+              disabled={plannedScriptIds.length === 0}
+              title={plannedScriptIds.length === 0 ? "Add scripts to your plan first" : "Begin executing today's plan"}
+            >
+              ▶ Start Day
+            </button>
+          )}
+          {exe.status === "in-progress" && (
+            <button
+              className="btn btn-primary"
+              onClick={completeDay}
+              title="Review and complete today's build"
+            >
+              ✓ Complete Day
+            </button>
+          )}
+          {exe.status === "complete" && (
+            <div className="text-sm text-matrix">
+              ✓ Shipped on {exe.completedAt ? new Date(exe.completedAt).toLocaleString() : "today"}
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* End-of-Day Review Modal */}
+      {showReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-bg/90 backdrop-blur-sm">
+          <div className="panel w-full max-w-2xl p-6 border-matrix shadow-glow">
+            <div className="text-xs text-matrix-dim uppercase tracking-[0.35em] mb-1">
+              // daily build complete — final review
+            </div>
+            <h2 className="text-2xl text-matrix crt-text font-bold mb-4">
+              Ship Today's Build
+            </h2>
+
+            <div className="mb-6 panel p-4 bg-bg-elev">
+              <h3 className="text-sm font-bold text-ink/90 mb-2">Build Quality Report</h3>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted">Planned Scripts:</span>
+                  <span className="text-ink/90">{plannedScriptIds.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">Completed:</span>
+                  <span className="text-ink/90">{completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">Execution Fidelity:</span>
+                  <span className={`font-bold ${executionFidelity >= 80 ? "text-matrix" : executionFidelity >= 50 ? "text-amber-bug" : "text-virus"}`}>
+                    {executionFidelity}%
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted">XP Earned:</span>
+                  <span className="text-matrix">~{Math.round(totalXp * (executionFidelity / 100))}</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted mb-4">
+              Reflect on your day. This helps you iterate and improve your scripts. <span className="text-virus">All fields required.</span>
+            </p>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="block text-sm text-ink/90 mb-1">
+                  🏆 What were your wins today?
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g., Completed morning meditation, stayed focused during deep work..."
+                  value={dailyReflection.wins}
+                  onChange={(e) =>
+                    setDailyReflection((r) => ({ ...r, wins: e.target.value }))
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-ink/90 mb-1">
+                  🐛 What were your challenges or bugs?
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g., Got distracted by notifications, skipped evening reflection..."
+                  value={dailyReflection.challenges}
+                  onChange={(e) =>
+                    setDailyReflection((r) => ({ ...r, challenges: e.target.value }))
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-ink/90 mb-1">
+                  🎯 What's your focus for tomorrow?
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g., Turn off phone during focus sessions, add buffer time between tasks..."
+                  value={dailyReflection.tomorrowFocus}
+                  onChange={(e) =>
+                    setDailyReflection((r) => ({ ...r, tomorrowFocus: e.target.value }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end">
+              <button
+                className="btn"
+                onClick={() => setShowReview(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={shipDay}
+                disabled={
+                  !dailyReflection.wins.trim() ||
+                  !dailyReflection.challenges.trim() ||
+                  !dailyReflection.tomorrowFocus.trim()
+                }
+                title={
+                  !dailyReflection.wins.trim() ||
+                  !dailyReflection.challenges.trim() ||
+                  !dailyReflection.tomorrowFocus.trim()
+                    ? "All reflection fields are required"
+                    : undefined
+                }
+              >
+                🚀 Ship Today's Build
+              </button>
+            </div>
+            <div className="text-xs text-muted text-center mt-3">
+              Your daily reflection helps you grow and contribute more effectively.
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-[260px_1fr] gap-4">
         <div className="panel p-3 h-fit sticky top-20">
@@ -197,12 +400,38 @@ export default function DayBuilder() {
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => {
                     if (drag) {
-                      setSlot(i, {
+                      const newSlot: ExecutableSlot = {
                         time: slot.time,
                         scriptId: drag.kind === "script" ? drag.id : undefined,
                         packageId:
                           drag.kind === "package" ? drag.id : undefined,
-                      });
+                      };
+
+                      // Calculate how many slots this item needs
+                      let durationMin = 0;
+                      if (drag.kind === "script" && scriptById[drag.id]) {
+                        durationMin = scriptById[drag.id].durationMin;
+                      } else if (drag.kind === "package" && pkgById[drag.id]) {
+                        durationMin = pkgById[drag.id].scriptIds.reduce(
+                          (acc, id) => acc + (scriptById[id]?.durationMin ?? 0),
+                          0
+                        );
+                      }
+
+                      const slotsNeeded = Math.ceil(durationMin / 60);
+                      const newSlots = [...exe.slots];
+
+                      // Set the dropped item in the current slot
+                      newSlots[i] = newSlot;
+
+                      // Clear the following slots that will be occupied
+                      for (let j = 1; j < slotsNeeded; j++) {
+                        if (i + j < newSlots.length) {
+                          newSlots[i + j] = { time: newSlots[i + j].time };
+                        }
+                      }
+
+                      update({ ...exe, slots: newSlots });
                       setDrag(null);
                     }
                   }}

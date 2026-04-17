@@ -120,21 +120,8 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
       return nextState;
     }
     case "passDay": {
-      const today = todayStr();
       const bumped = bumpStreak(state);
-      const todaysExe = bumped.executables.find((e) => e.date === today);
-      const exe: Executable = todaysExe
-        ? { ...todaysExe, status: "passed" }
-        : {
-            id: uid(),
-            date: today,
-            slots: [],
-            status: "passed",
-          };
-      const execs = bumped.executables.some((e) => e.date === today)
-        ? bumped.executables.map((e) => (e.date === today ? exe : e))
-        : [...bumped.executables, exe];
-      let next: ScriptLabState = { ...bumped, executables: execs };
+      let next: ScriptLabState = { ...bumped };
       const unlocks = maybeUnlockAchievements(next, { kind: "day-passed" });
       if (unlocks.length) {
         next = { ...next, achievements: [...next.achievements, ...unlocks] };
