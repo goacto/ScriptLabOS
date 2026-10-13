@@ -4,6 +4,7 @@ import type {
   Package,
   Profile,
   ScriptLabState,
+  SessionReview,
 } from "./types";
 import { emptyState } from "./storage";
 import {
@@ -29,7 +30,9 @@ export type Action =
       scriptId: string;
       completed: boolean;
       durationMin: number;
+      review?: SessionReview;
     }
+  | { type: "logRelapse"; scriptId: string }
   | { type: "passDay" }
   | { type: "reset" }
   | { type: "importAll"; state: ScriptLabState };
@@ -95,6 +98,8 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
             at: new Date().toISOString(),
             completed: action.completed,
             durationMin: action.durationMin,
+            kind: "session",
+            ...(action.review ? { review: action.review } : {}),
           },
         ],
         updatedAt: new Date().toISOString(),
@@ -118,6 +123,24 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
         }
       }
       return nextState;
+    }
+    case "logRelapse": {
+      const loggedAt = new Date().toISOString();
+      return {
+        ...state,
+        scripts: state.scripts.map((s) =>
+          s.id === action.scriptId
+            ? {
+                ...s,
+                runs: [
+                  ...s.runs,
+                  { at: loggedAt, completed: false, durationMin: 0, kind: "relapse" },
+                ],
+                updatedAt: loggedAt,
+              }
+            : s
+        ),
+      };
     }
     case "passDay": {
       const bumped = bumpStreak(state);

@@ -6,10 +6,25 @@ export type GssType =
   | "virus"
   | "package";
 
+export interface SessionReview {
+  whatWorked: string;
+  whatDidnt: string;
+  insights: string;
+}
+
+/**
+ * "session" = a timed run of a script (Tester / Pomodoro).
+ * "relapse" = a Quick Log of a bug/virus firing. Relapses never earn XP or
+ * patch credit. Runs saved before this field existed are normalized on load.
+ */
+export type GssRunKind = "session" | "relapse";
+
 export interface GssRun {
   at: string;
   completed: boolean;
   durationMin: number;
+  kind?: GssRunKind;
+  review?: SessionReview;
 }
 
 export interface GssFile {
