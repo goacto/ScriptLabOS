@@ -67,6 +67,11 @@ export default function PomodoroTimer() {
         scriptId: script.id,
         completed: true,
         durationMin: script.durationMin,
+        review: {
+          whatWorked: reflection.whatWorked.trim(),
+          whatDidnt: reflection.whatDidnt.trim(),
+          insights: reflection.insights.trim(),
+        },
       });
     }
     setShowReflection(false);

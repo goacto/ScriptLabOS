@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon } from "@/lib/gss";
 import { xpForRun } from "@/lib/gamification";
+import { isRelapse } from "@/lib/cleanStreak";
+import type { SessionReview } from "@/lib/types";
 
 type CommitEvent =
   | {
@@ -14,6 +16,8 @@ type CommitEvent =
       scriptType: string;
       duration: number;
       completed: boolean;
+      isRelapse: boolean;
+      review?: SessionReview;
       xp: number;
     }
   | {
@@ -72,6 +76,8 @@ export default function HistoryPage() {
           scriptType: script.type,
           duration: run.durationMin,
           completed: run.completed,
+          isRelapse: isRelapse(run),
+          review: run.review,
           xp: run.completed ? xpForRun(script, run.durationMin) : 0,
         });
       });
@@ -321,7 +327,7 @@ export default function HistoryPage() {
                 <div>
                   <div className="flex items-baseline gap-2 mb-1">
                     <span className="text-matrix font-mono font-bold">
-                      {event.completed ? "commit" : "abort"}
+                      {event.isRelapse ? "log" : event.completed ? "commit" : "abort"}
                     </span>
                     <span className="text-muted text-xs">
                       {formatTimestamp(event.timestamp)}
@@ -335,11 +341,34 @@ export default function HistoryPage() {
                   <div className="text-sm text-ink/90">
                     {typeIcon[event.scriptType as keyof typeof typeIcon]}{" "}
                     <span className="font-semibold">{event.scriptTitle}</span> ·{" "}
-                    {event.duration}m
-                    {!event.completed && (
+                    {event.isRelapse ? (
+                      <span className="text-amber-bug">relapse logged</span>
+                    ) : (
+                      <>{event.duration}m</>
+                    )}
+                    {!event.completed && !event.isRelapse && (
                       <span className="text-virus ml-2">(bailed)</span>
                     )}
                   </div>
+                  {event.review && (
+                    <div className="text-xs text-muted space-y-1 pl-4 mt-1 border-l border-matrix/20">
+                      {event.review.whatWorked && (
+                        <div>
+                          <span className="text-matrix">Worked:</span> {event.review.whatWorked}
+                        </div>
+                      )}
+                      {event.review.whatDidnt && (
+                        <div>
+                          <span className="text-amber-bug">Didn&apos;t:</span> {event.review.whatDidnt}
+                        </div>
+                      )}
+                      {event.review.insights && (
+                        <div>
+                          <span className="text-cyan-300">Insights:</span> {event.review.insights}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <div className="text-xs text-muted mt-1">
                     {formatFullDate(event.timestamp)}
                   </div>

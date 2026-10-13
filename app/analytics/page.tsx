@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { xpForRun } from "@/lib/gamification";
+import { isRelapse } from "@/lib/cleanStreak";
 
 export default function AnalyticsPage() {
   const { state, hydrated } = useScriptLab();
@@ -36,18 +37,17 @@ export default function AnalyticsPage() {
 
       const exe = state.executables.find((e) => e.date === date);
 
+      const sessionRuns = dayRuns.filter((r) => !isRelapse(r));
+      const relapseRuns = dayRuns.filter(isRelapse);
+
       return {
         date,
-        totalRuns: dayRuns.length,
-        completedRuns: dayRuns.filter((r) => r.completed).length,
-        bailedRuns: dayRuns.filter((r) => !r.completed).length,
+        totalRuns: sessionRuns.length,
+        completedRuns: sessionRuns.filter((r) => r.completed).length,
+        bailedRuns: sessionRuns.filter((r) => !r.completed).length,
         xpEarned: dayRuns.reduce((sum, r) => sum + r.xp, 0),
-        bugsPatch: dayRuns.filter(
-          (r) => r.scriptType === "bug" && r.completed
-        ).length,
-        virusesDeleted: dayRuns.filter(
-          (r) => r.scriptType === "virus" && r.completed
-        ).length,
+        bugRelapses: relapseRuns.filter((r) => r.scriptType === "bug").length,
+        virusRelapses: relapseRuns.filter((r) => r.scriptType === "virus").length,
         buildStatus: exe?.status || "none",
       };
     });
@@ -56,11 +56,8 @@ export default function AnalyticsPage() {
       totalCompleted: dailyStats.reduce((sum, d) => sum + d.completedRuns, 0),
       totalBailed: dailyStats.reduce((sum, d) => sum + d.bailedRuns, 0),
       totalXP: dailyStats.reduce((sum, d) => sum + d.xpEarned, 0),
-      totalBugsPatched: dailyStats.reduce((sum, d) => sum + d.bugsPatch, 0),
-      totalVirusesDeleted: dailyStats.reduce(
-        (sum, d) => sum + d.virusesDeleted,
-        0
-      ),
+      totalBugRelapses: dailyStats.reduce((sum, d) => sum + d.bugRelapses, 0),
+      totalVirusRelapses: dailyStats.reduce((sum, d) => sum + d.virusRelapses, 0),
       avgXPPerDay:
         Math.round(
           dailyStats.reduce((sum, d) => sum + d.xpEarned, 0) / 30
@@ -114,20 +111,20 @@ export default function AnalyticsPage() {
         </div>
 
         <div className="panel p-4">
-          <div className="text-xs text-muted mb-1">Bugs Patched</div>
+          <div className="text-xs text-muted mb-1">Bug Relapses Logged</div>
           <div className="text-2xl font-bold text-amber-bug">
-            {analytics.totalStats.totalBugsPatched}
+            {analytics.totalStats.totalBugRelapses}
           </div>
-          <div className="text-xs text-muted mt-1">bad habits eliminated</div>
+          <div className="text-xs text-muted mt-1">times you noticed a bug run</div>
         </div>
 
         <div className="panel p-4">
-          <div className="text-xs text-muted mb-1">Viruses Deleted</div>
+          <div className="text-xs text-muted mb-1">Virus Relapses Logged</div>
           <div className="text-2xl font-bold text-virus">
-            {analytics.totalStats.totalVirusesDeleted}
+            {analytics.totalStats.totalVirusRelapses}
           </div>
           <div className="text-xs text-muted mt-1">
-            limiting beliefs removed
+            times you noticed a virus run
           </div>
         </div>
       </div>
