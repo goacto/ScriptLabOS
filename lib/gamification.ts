@@ -69,8 +69,8 @@ export function maybeUnlockAchievements(
     if (event.script.type === "virus" && !has("first-virus-deleted")) {
       unlocked.push({
         id: "first-virus-deleted",
-        title: "Quarantined",
-        description: "Overwrote your first limiting belief.",
+        title: "Branched",
+        description: "Ran a new line beside an old belief.",
         unlockedAt: now,
       });
     }
