@@ -92,11 +92,10 @@ describe("reducer: recordRun", () => {
 });
 
 describe("reducer: passDay", () => {
-  it("marks today's executable passed, bumps streak, and unlocks first-compile once", () => {
+  it("bumps streak and unlocks first-compile once (the executable itself is shipped by DayBuilder via upsertExecutable)", () => {
     const seeded: ScriptLabState = { ...emptyState, profile };
     const once = reducer(seeded, { type: "passDay" });
     expect(once.streak).toBe(1);
-    expect(once.executables.some((e) => e.status === "passed")).toBe(true);
     expect(once.achievements.find((a) => a.id === "first-compile")).toBeTruthy();
 
     const twice = reducer(once, { type: "passDay" });
@@ -127,5 +126,43 @@ describe("reducer: reset + importAll", () => {
     const next = reducer(emptyState, { type: "importAll", state: imported });
     expect(next.xp).toBe(999);
     expect(next.profile?.name).toBe("neo");
+  });
+});
+
+const bug = (overrides: Partial<GssFile> = {}): GssFile =>
+  makeGss({ title: "doomscroll", type: "bug", durationMin: 0, ...overrides });
+
+describe("reducer: Tester session review (a)", () => {
+  it("saves the required review answers on the completed run", () => {
+    const s = baseline();
+    const seeded = reducer(emptyState, { type: "addScript", script: s });
+    const review = {
+      whatWorked: "stayed with it",
+      whatDidnt: "phone buzzed",
+      insights: "phone in other room",
+    };
+    const next = reducer(seeded, {
+      type: "recordRun",
+      scriptId: s.id,
+      completed: true,
+      durationMin: 10,
+      review,
+    });
+    expect(next.scripts[0].runs[0].review).toEqual(review);
+    expect(next.scripts[0].runs[0].kind).toBe("session");
+  });
+});
+
+describe("reducer: Quick Log relapse (b)", () => {
+  it("logs a bug firing as a relapse with no patched credit, XP or achievements", () => {
+    const b = bug();
+    const seeded = reducer(emptyState, { type: "addScript", script: b });
+    const next = reducer(seeded, { type: "logRelapse", scriptId: b.id });
+    const run = next.scripts[0].runs[0];
+    expect(run.kind).toBe("relapse");
+    expect(run.completed).toBe(false);
+    expect(next.xp).toBe(0);
+    expect(next.achievements.map((a) => a.id)).not.toContain("first-bug-patched");
+    expect(next.achievements).toHaveLength(0);
   });
 });

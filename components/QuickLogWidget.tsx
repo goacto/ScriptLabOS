@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import type { GssFile } from "@/lib/types";
+import { cleanStreakFor } from "@/lib/cleanStreak";
 
 export default function QuickLogWidget() {
   const { state, dispatch } = useScriptLab();
@@ -14,37 +14,16 @@ export default function QuickLogWidget() {
     );
   }, [state.scripts]);
 
-  // Calculate days clean and status for each script
   const scriptStats = useMemo(() => {
     const now = new Date();
     return badScripts.map((script) => {
-      const tallies = script.runs.length;
-      const lastRun = script.runs.length > 0
-        ? script.runs[script.runs.length - 1]
-        : null;
-
-      let daysClean = 0;
-      let isEliminated = false;
-
-      if (lastRun) {
-        const lastRunDate = new Date(lastRun.at);
-        const diffMs = now.getTime() - lastRunDate.getTime();
-        daysClean = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        isEliminated = daysClean >= 21;
-      } else {
-        // Never run, calculate from creation
-        const createdDate = new Date(script.createdAt);
-        const diffMs = now.getTime() - createdDate.getTime();
-        daysClean = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        isEliminated = daysClean >= 21;
-      }
-
+      const streak = cleanStreakFor(script, now);
       return {
         script,
-        tallies,
-        daysClean,
-        isEliminated,
-        lastRun,
+        tallies: streak.relapseCount,
+        daysClean: streak.daysClean ?? 0,
+        isEliminated: streak.isEliminated,
+        lastRun: streak.lastRelapseAt,
       };
     });
   }, [badScripts]);
@@ -53,12 +32,7 @@ export default function QuickLogWidget() {
   const eliminatedScripts = scriptStats.filter((s) => s.isEliminated);
 
   const quickLog = (scriptId: string) => {
-    dispatch({
-      type: "recordRun",
-      scriptId,
-      completed: true, // Logging the bad behavior happened
-      durationMin: 0, // Quick log = 0 duration
-    });
+    dispatch({ type: "logRelapse", scriptId });
   };
 
   if (badScripts.length === 0) return null;
@@ -105,7 +79,9 @@ export default function QuickLogWidget() {
                           )}
                         </>
                       ) : (
-                        <span className="text-matrix">Never logged</span>
+                        <span className="text-matrix">
+                          Not logged yet · your clean streak starts at your first log
+                        </span>
                       )}
                       <span className="mx-1">·</span>
                       <span>{tallies} tallies</span>
