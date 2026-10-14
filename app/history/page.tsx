@@ -409,16 +409,8 @@ export default function HistoryPage() {
                       {formatTimestamp(event.timestamp)}
                     </span>
                     {event.executionFidelity !== undefined && (
-                      <span
-                        className={`text-xs font-bold ${
-                          event.executionFidelity >= 80
-                            ? "text-matrix"
-                            : event.executionFidelity >= 50
-                            ? "text-amber-bug"
-                            : "text-virus"
-                        }`}
-                      >
-                        {event.executionFidelity}% fidelity
+                      <span className="text-xs text-muted">
+                        {event.executionFidelity}% of plan ran
                       </span>
                     )}
                   </div>
@@ -429,17 +421,19 @@ export default function HistoryPage() {
                   {event.reflection && (
                     <div className="text-xs text-muted space-y-1 pl-4 border-l border-matrix/20">
                       <div>
-                        <span className="text-matrix">Wins:</span>{" "}
+                        <span className="text-matrix">Ran:</span>{" "}
                         {event.reflection.wins}
                       </div>
                       <div>
-                        <span className="text-amber-bug">Challenges:</span>{" "}
+                        <span className="text-muted">Ran instead:</span>{" "}
                         {event.reflection.challenges}
                       </div>
-                      <div>
-                        <span className="text-cyan-300">Tomorrow:</span>{" "}
-                        {event.reflection.tomorrowFocus}
-                      </div>
+                      {event.reflection.tomorrowFocus.trim() && (
+                        <div>
+                          <span className="text-cyan-300">Tomorrow:</span>{" "}
+                          {event.reflection.tomorrowFocus}
+                        </div>
+                      )}
                     </div>
                   )}
                   <div className="text-xs text-muted mt-1">

@@ -58,7 +58,7 @@ export default function CommandPalette() {
       { id: "new-baseline", label: "New baseline .gss", hint: "[OS]", run: () => newScript("baseline") },
       { id: "new-update", label: "New update .gss", hint: "[UPD]", run: () => newScript("update") },
       { id: "new-upgrade", label: "New upgrade .gss", hint: "[UP+]", run: () => newScript("upgrade") },
-      { id: "new-bug", label: "New bug to patch", hint: "[BUG]", run: () => newScript("bug") },
+      { id: "new-bug", label: "New bug to notice", hint: "[BUG]", run: () => newScript("bug") },
       { id: "new-virus", label: "New virus to overwrite", hint: "[VIR]", run: () => newScript("virus") },
       {
         id: "go-to-day-builder",

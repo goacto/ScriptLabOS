@@ -93,8 +93,8 @@ export default function OnboardingWizard() {
                     <li><span className="text-matrix-dim">[OS]</span> Baseline — heartbeat habits (sleep, breathe, move)</li>
                     <li><span className="text-matrix-dim">[UPD]</span> Update — learning & skill practice</li>
                     <li><span className="text-matrix-dim">[UP+]</span> Upgrade — identity-level shifts</li>
-                    <li><span className="text-accent-amber">[BUG]</span> Bug — bad habits to patch</li>
-                    <li><span className="text-accent-red">[VIR]</span> Virus — limiting beliefs to delete</li>
+                    <li><span className="text-accent-amber">[BUG]</span> Bug — old habits you notice and log</li>
+                    <li><span className="text-accent-red">[VIR]</span> Virus — old beliefs to branch past</li>
                   </ul>
                 </div>
 

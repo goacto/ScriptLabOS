@@ -74,7 +74,7 @@ export default function QuickLogWidget() {
                           {daysClean > 1 && `${daysClean} days clean`}
                           {daysClean >= 7 && daysClean < 21 && (
                             <span className="text-matrix ml-2">
-                              🎉 {21 - daysClean} days to elimination!
+                              {21 - daysClean} days until it moves to Archived
                             </span>
                           )}
                         </>
@@ -103,10 +103,10 @@ export default function QuickLogWidget() {
       {eliminatedScripts.length > 0 && (
         <div className="panel p-6 border-matrix/30">
           <h2 className="text-lg text-matrix font-bold mb-1">
-            ✅ Eliminated Scripts (21+ days clean)
+            🗄 Archived (21+ days clean)
           </h2>
           <p className="text-xs text-muted mb-4">
-            Congrats! These scripts haven't run in 21+ days. Log again to resurrect.
+            These haven&apos;t run in 21+ days. The old line stays here, not deleted. Log it again if it runs, and it moves back to active.
           </p>
 
           <div className="space-y-2">
@@ -121,7 +121,7 @@ export default function QuickLogWidget() {
                 >
                   <div className="flex items-center gap-2 flex-1">
                     <span className="text-muted opacity-50">{icon}</span>
-                    <span className="text-ink/70 line-through">
+                    <span className="text-ink/70">
                       {script.title}
                     </span>
                     <span className="text-xs text-muted">
@@ -132,7 +132,7 @@ export default function QuickLogWidget() {
                     onClick={() => quickLog(script.id)}
                     className="btn !py-1 !px-2 text-xs opacity-70 hover:opacity-100"
                   >
-                    Resurrect
+                    Log again
                   </button>
                 </div>
               );
