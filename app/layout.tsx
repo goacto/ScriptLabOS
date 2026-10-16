@@ -3,6 +3,7 @@ import "./globals.css";
 import { ScriptLabProvider } from "@/lib/ScriptLabProvider";
 import AchievementToasts from "@/components/AchievementToasts";
 import CommandPalette from "@/components/CommandPalette";
+import UsagePing from "@/components/UsagePing";
 
 export const metadata: Metadata = {
   title: "ScriptLabOS by GOACTO",
@@ -54,6 +55,7 @@ export default function RootLayout({
           {children}
           <AchievementToasts />
           <CommandPalette />
+          <UsagePing />
         </ScriptLabProvider>
       </body>
     </html>
