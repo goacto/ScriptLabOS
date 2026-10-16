@@ -1,0 +1,6 @@
+ScriptLabOS ping wiring proof (GOACTO REQ v0.3.1 §4.3/§4.6), 2026-10-15 ET
+Production origin https://scriptlabos.goacto.com is on the /api/ping allowlist.
+vitest: lib/goactoPing.test.ts 3/3 pass (one scriptlabos ping/day, minimal body, credentials omit; opt-out or GPC sends nothing; offline never throws).
+Full suite: 32/33. The 1 failure (lib/reducer.test.ts "passDay ... first-compile") already fails on main without this PR, and tsc flags the same test file (pre-existing).
+next build: Compiled successfully.
+Settings > Privacy: "Share anonymous usage count" switch (default on). Off stores goacto:usage-optout:v1 and stops pings.
