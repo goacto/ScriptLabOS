@@ -6,6 +6,7 @@ import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { exportState, resetState } from "@/lib/storage";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import TutorialViewer from "@/components/TutorialViewer";
+import UsageToggle from "@/components/UsageToggle";
 
 type DocType = "changelog" | "backlog" | "engineering" | null;
 
@@ -131,6 +132,8 @@ export default function SettingsPage() {
             </button>
           </div>
         </div>
+
+        <UsageToggle />
 
         {/* Data Management */}
         <div className="panel p-6">
