@@ -27,6 +27,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ### Changed
 - Nav bar shows the `⌘K` hint on desktop widths and now includes "Packages" and "Profile" entries.
 - **Splash no longer auto-advances.** After the boot sequence it waits for the user to click `[ enter ]`, press `Enter`, or press `Space`. The button auto-focuses and a subtle "press enter or space" hint sits below it.
+- **Mobile / iOS readiness.** Root layout now exports `viewport` (`device-width`, `initialScale: 1`) and `themeColor: #04070a` so iOS Safari scales correctly and tints the status bar. Apple Web App metadata (`capable: true`, `statusBarStyle: black-translucent`, title `ScriptLab`) and an SVG icon/apple-touch-icon are declared so Add-to-Home-Screen renders branded.
 
 ---
 

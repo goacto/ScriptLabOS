@@ -46,7 +46,12 @@ export default function ScriptEditor({
           <button
             className="btn btn-danger text-xs min-h-11"
             onClick={() => {
-              if (confirm(`Delete ${script.name}.gss?`)) onDelete(script.id);
+              if (
+                confirm(
+                  `Delete ${script.name}.gss? This can't be undone.\n\nBranch before you delete: "duplicate" keeps the old line, and you can write the new one beside it.`
+                )
+              )
+                onDelete(script.id);
             }}
           >
             delete
