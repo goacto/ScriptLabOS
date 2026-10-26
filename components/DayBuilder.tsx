@@ -5,6 +5,7 @@ import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { uid, typeIcon } from "@/lib/gss";
 import { isOnLocalDay, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
+import { canShipDay } from "@/lib/reflection";
 import type { Executable, ExecutableSlot } from "@/lib/types";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i); // 05:00 – 22:00
@@ -182,6 +183,8 @@ export default function DayBuilder() {
       : pkgById[picked.id]?.title ?? "package"
     : null;
 
+  const canShip = canShipDay(dailyReflection);
+
   const startDay = () => {
     update({ ...exe, status: "in-progress" });
   };
@@ -227,7 +230,7 @@ export default function DayBuilder() {
           </div>
           {exe.status === "in-progress" && plannedScriptIds.length > 0 && (
             <div className="text-xs text-matrix mt-1">
-              📊 Execution Fidelity: {executionFidelity}% ({completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}/{plannedScriptIds.length} scripts completed)
+              📝 Ran so far: {completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length} of {plannedScriptIds.length} planned scripts
             </div>
           )}
           {warnings.length > 0 && (
@@ -276,7 +279,7 @@ export default function DayBuilder() {
             </h2>
 
             <div className="mb-6 panel p-4 bg-bg-elev">
-              <h3 className="text-sm font-bold text-ink/90 mb-2">Build Quality Report</h3>
+              <h3 className="text-sm font-bold text-ink/90 mb-2">What ran today</h3>
               <div className="space-y-1 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted">Planned Scripts:</span>
@@ -287,8 +290,8 @@ export default function DayBuilder() {
                   <span className="text-ink/90">{completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted">Execution Fidelity:</span>
-                  <span className={`font-bold ${executionFidelity >= 80 ? "text-matrix" : executionFidelity >= 50 ? "text-amber-bug" : "text-virus"}`}>
+                  <span className="text-muted">Planned vs ran:</span>
+                  <span className="text-ink/90">
                     {executionFidelity}%
                   </span>
                 </div>
@@ -300,17 +303,17 @@ export default function DayBuilder() {
             </div>
 
             <p className="text-sm text-muted mb-4">
-              Reflect on your day. This helps you iterate and improve your scripts. <span className="text-virus">All fields required.</span>
+              Write down what actually ran, word for word if you can. Don&apos;t grade it. <span className="text-muted">The first two are required; tomorrow&apos;s focus is optional.</span>
             </p>
 
             <div className="space-y-4 mb-6">
               <div>
                 <label className="block text-sm text-ink/90 mb-1">
-                  🏆 What were your wins today?
+                  📝 What actually ran today?
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g., Completed morning meditation, stayed focused during deep work..."
+                  placeholder="e.g., Morning breath at 6:10, deep work until the 10:00 call..."
                   value={dailyReflection.wins}
                   onChange={(e) =>
                     setDailyReflection((r) => ({ ...r, wins: e.target.value }))
@@ -320,11 +323,11 @@ export default function DayBuilder() {
 
               <div>
                 <label className="block text-sm text-ink/90 mb-1">
-                  🐛 What were your challenges or bugs?
+                  👀 What ran instead, or didn&apos;t run?
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g., Got distracted by notifications, skipped evening reflection..."
+                  placeholder="e.g., Checked the phone at lunch, evening walk didn&apos;t happen..."
                   value={dailyReflection.challenges}
                   onChange={(e) =>
                     setDailyReflection((r) => ({ ...r, challenges: e.target.value }))
@@ -334,11 +337,11 @@ export default function DayBuilder() {
 
               <div>
                 <label className="block text-sm text-ink/90 mb-1">
-                  🎯 What's your focus for tomorrow?
+                  🎯 Tomorrow&apos;s focus (optional)
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g., Turn off phone during focus sessions, add buffer time between tasks..."
+                  placeholder="Leave blank if nothing comes to mind."
                   value={dailyReflection.tomorrowFocus}
                   onChange={(e) =>
                     setDailyReflection((r) => ({ ...r, tomorrowFocus: e.target.value }))
@@ -357,24 +360,18 @@ export default function DayBuilder() {
               <button
                 className="btn btn-primary"
                 onClick={shipDay}
-                disabled={
-                  !dailyReflection.wins.trim() ||
-                  !dailyReflection.challenges.trim() ||
-                  !dailyReflection.tomorrowFocus.trim()
-                }
+                disabled={!canShip}
                 title={
-                  !dailyReflection.wins.trim() ||
-                  !dailyReflection.challenges.trim() ||
-                  !dailyReflection.tomorrowFocus.trim()
-                    ? "All reflection fields are required"
-                    : undefined
+                  canShip
+                    ? undefined
+                    : "Write what ran and what ran instead to ship the day"
                 }
               >
                 🚀 Ship Today's Build
               </button>
             </div>
             <div className="text-xs text-muted text-center mt-3">
-              Your daily reflection helps you grow and contribute more effectively.
+              This is what the day was made of.
             </div>
           </div>
         </div>

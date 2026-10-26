@@ -4,8 +4,14 @@ import type {
   Package,
   Profile,
   ScriptLabState,
+  SessionReview,
 } from "./types";
-import { coerceLoadedState, emptyState, validateImportedState } from "./storage";
+import {
+  coerceLoadedState,
+  emptyState,
+  migrateState,
+  validateImportedState,
+} from "./storage";
 import {
   bumpStreak,
   maybeUnlockAchievements,
@@ -28,7 +34,9 @@ export type Action =
       scriptId: string;
       completed: boolean;
       durationMin: number;
+      review?: SessionReview;
     }
+  | { type: "logRelapse"; scriptId: string }
   | { type: "passDay" }
   | { type: "reset" }
   | { type: "importAll"; state: ScriptLabState };
@@ -36,11 +44,11 @@ export type Action =
 export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
   switch (action.type) {
     case "hydrate":
-      return coerceLoadedState(action.state);
+      return migrateState(coerceLoadedState(action.state));
     case "importAll": {
       const checked = validateImportedState(action.state);
       if (!checked.ok) return state;
-      return checked.state;
+      return migrateState(checked.state);
     }
     case "setProfile":
       return { ...state, profile: action.profile };
@@ -98,6 +106,8 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
             at: new Date().toISOString(),
             completed: action.completed,
             durationMin: action.durationMin,
+            kind: "session",
+            ...(action.review ? { review: action.review } : {}),
           },
         ],
         updatedAt: new Date().toISOString(),
@@ -121,6 +131,24 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
         }
       }
       return nextState;
+    }
+    case "logRelapse": {
+      const loggedAt = new Date().toISOString();
+      return {
+        ...state,
+        scripts: state.scripts.map((s) =>
+          s.id === action.scriptId
+            ? {
+                ...s,
+                runs: [
+                  ...s.runs,
+                  { at: loggedAt, completed: false, durationMin: 0, kind: "relapse" },
+                ],
+                updatedAt: loggedAt,
+              }
+            : s
+        ),
+      };
     }
     case "passDay": {
       const bumped = bumpStreak(state);

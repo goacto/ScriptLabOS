@@ -381,7 +381,7 @@ export function loadState(): ScriptLabState {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return emptyState;
-    return coerceLoadedState(JSON.parse(raw));
+    return migrateState(coerceLoadedState(JSON.parse(raw)));
   } catch {
     return emptyState;
   }
@@ -403,10 +403,38 @@ export function importState(json: string): ScriptLabState {
       decision.cancelled ? "Import cancelled." : decision.error
     );
   }
-  return decision.state;
+  return migrateState(decision.state);
 }
 
 export function resetState(): void {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(KEY);
+}
+
+const isBadHabit = (script: GssFile) =>
+  script.type === "bug" || script.type === "virus";
+
+/**
+ * Before run kinds existed, Quick Log stored a bug/virus firing as a
+ * completed 0-minute run, which counted as "patched". The Tester never runs
+ * bug/virus scripts, so those legacy runs are exactly the Quick Logs.
+ */
+function tagLegacyRun(script: GssFile, run: GssRun): GssRun {
+  if (run.kind) return run;
+  const isLegacyQuickLog = isBadHabit(script) && run.durationMin === 0;
+  return isLegacyQuickLog
+    ? { ...run, kind: "relapse", completed: false }
+    : { ...run, kind: "session" };
+}
+
+/** Additive, idempotent migration for any stored or imported state. */
+export function migrateState(raw: Partial<ScriptLabState>): ScriptLabState {
+  const merged: ScriptLabState = { ...emptyState, ...raw };
+  return {
+    ...merged,
+    scripts: (merged.scripts ?? []).map((script) => ({
+      ...script,
+      runs: (script.runs ?? []).map((run) => tagLegacyRun(script, run)),
+    })),
+  };
 }

@@ -53,11 +53,7 @@ export default function BuildStatusHUD() {
     status === "complete"
       ? "text-matrix"
       : status === "in-progress"
-      ? executionFidelity >= 80
-        ? "text-matrix"
-        : executionFidelity >= 50
-        ? "text-amber-bug"
-        : "text-virus"
+      ? "text-ink"
       : "text-muted";
 
   const wakeUps = state.profile?.wakeUps ?? [];
@@ -82,9 +78,9 @@ export default function BuildStatusHUD() {
           <div className="text-xs text-muted mt-2">{today}</div>
           {status === "in-progress" && plannedScriptIds.length > 0 && (
             <div className="mt-3">
-              <div className="text-xs text-muted mb-1">Build Quality</div>
+              <div className="text-xs text-muted mb-1">Ran so far</div>
               <div className="flex items-baseline gap-2">
-                <div className={`text-xl font-bold ${executionFidelity >= 80 ? "text-matrix" : executionFidelity >= 50 ? "text-amber-bug" : "text-virus"}`}>
+                <div className="text-xl font-bold text-ink">
                   {executionFidelity}%
                 </div>
                 <div className="text-xs text-muted">
@@ -162,7 +158,7 @@ export default function BuildStatusHUD() {
         <Link href="/library" className="panel p-5 block hover:shadow-glow-sm">
           <div className="text-matrix font-bold">Library →</div>
           <div className="text-xs text-muted mt-1">
-            Edit, create, delete .gss files.
+            Edit, create, branch .gss files.
           </div>
         </Link>
         <Link href="/day" className="panel p-5 block hover:shadow-glow-sm">
