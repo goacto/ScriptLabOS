@@ -18,13 +18,13 @@ export default function AchievementToasts() {
   // past achievements on page load.
   useEffect(() => {
     if (initialisedRef.current) return;
-    state.achievements.forEach((a) => seenRef.current.add(a.id));
+    (state.achievements ?? []).forEach((a) => seenRef.current.add(a.id));
     initialisedRef.current = true;
   }, [state.achievements]);
 
   useEffect(() => {
     if (!initialisedRef.current) return;
-    const fresh = state.achievements.filter(
+    const fresh = (state.achievements ?? []).filter(
       (a) => !seenRef.current.has(a.id)
     );
     if (!fresh.length) return;

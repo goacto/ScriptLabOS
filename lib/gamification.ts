@@ -1,4 +1,7 @@
 import type { Achievement, GssFile, ScriptLabState } from "./types";
+import { shiftDate, todayStr } from "./dates";
+
+export { todayStr };
 
 const typeMultiplier = {
   baseline: 1,
@@ -98,14 +101,13 @@ export function maybeUnlockAchievements(
   return unlocked;
 }
 
-export function todayStr(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-export function bumpStreak(state: ScriptLabState): ScriptLabState {
-  const today = todayStr();
+export function bumpStreak(
+  state: ScriptLabState,
+  now: Date = new Date()
+): ScriptLabState {
+  const today = todayStr(now);
   if (state.lastPassedDate === today) return state;
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const yesterday = shiftDate(today, -1);
   const nextStreak = state.lastPassedDate === yesterday ? state.streak + 1 : 1;
   return { ...state, streak: nextStreak, lastPassedDate: today };
 }

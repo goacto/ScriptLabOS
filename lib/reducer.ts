@@ -5,11 +5,10 @@ import type {
   Profile,
   ScriptLabState,
 } from "./types";
-import { emptyState } from "./storage";
+import { coerceLoadedState, emptyState, validateImportedState } from "./storage";
 import {
   bumpStreak,
   maybeUnlockAchievements,
-  todayStr,
   xpForRun,
 } from "./gamification";
 import { uid } from "./gss";
@@ -37,8 +36,12 @@ export type Action =
 export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
   switch (action.type) {
     case "hydrate":
-    case "importAll":
-      return action.state;
+      return coerceLoadedState(action.state);
+    case "importAll": {
+      const checked = validateImportedState(action.state);
+      if (!checked.ok) return state;
+      return checked.state;
+    }
     case "setProfile":
       return { ...state, profile: action.profile };
     case "addScript":

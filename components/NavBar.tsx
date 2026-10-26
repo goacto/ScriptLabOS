@@ -63,7 +63,7 @@ export default function NavBar() {
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden text-matrix p-1"
+              className="lg:hidden inline-flex items-center justify-center min-h-11 min-w-11 text-matrix"
               aria-label="Toggle menu"
             >
               <svg

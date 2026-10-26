@@ -69,7 +69,7 @@ export default function ProfileEditor() {
             </div>
           </div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() =>
               setWakeUps((l) => [...l, { id: uid(), text: "" }])
             }
@@ -100,7 +100,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setWakeUps((l) => l.filter((x) => x.id !== w.id))
                 }
@@ -116,7 +116,7 @@ export default function ProfileEditor() {
         <div className="flex justify-between items-baseline mb-3">
           <div className="text-matrix font-bold">Core Values</div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() => setValues((l) => [...l, ""])}
           >
             + add
@@ -135,7 +135,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setValues((arr) => arr.filter((_, j) => j !== i))
                 }
@@ -151,7 +151,7 @@ export default function ProfileEditor() {
         <div className="flex justify-between items-baseline mb-3">
           <div className="text-matrix font-bold">Goals</div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() => setGoals((l) => [...l, ""])}
           >
             + add
@@ -170,7 +170,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setGoals((arr) => arr.filter((_, j) => j !== i))
                 }

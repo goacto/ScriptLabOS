@@ -40,7 +40,7 @@ export default function FileTree({
             <button
               title={`new ${typeLabel[type]}`}
               onClick={() => onNew(type)}
-              className="text-xs text-matrix hover:crt-text"
+              className="inline-flex items-center justify-center min-h-11 min-w-11 text-xs text-matrix hover:crt-text"
             >
               +
             </button>
@@ -53,7 +53,7 @@ export default function FileTree({
               <li key={s.id}>
                 <button
                   onClick={() => onSelect(s.id)}
-                  className={`w-full text-left pl-5 pr-2 py-1 rounded truncate ${
+                  className={`w-full text-left pl-5 pr-2 py-2 min-h-11 rounded truncate ${
                     selectedId === s.id
                       ? "bg-matrix/15 text-matrix crt-text"
                       : "hover:bg-matrix/5 text-ink/80"

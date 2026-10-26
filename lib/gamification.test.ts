@@ -7,6 +7,7 @@ import {
   todayStr,
   xpForRun,
 } from "./gamification";
+import { shiftDate, todayStr as localToday } from "./dates";
 import { makeGss } from "./gss";
 import { emptyState } from "./storage";
 import type { GssFile, ScriptLabState } from "./types";
@@ -95,7 +96,7 @@ describe("bumpStreak", () => {
     expect(twice.streak).toBe(1);
   });
   it("increments when yesterday was passed", () => {
-    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const yesterday = shiftDate(localToday(), -1);
     const seeded: ScriptLabState = {
       ...emptyState,
       streak: 3,
@@ -105,7 +106,7 @@ describe("bumpStreak", () => {
     expect(next.streak).toBe(4);
   });
   it("resets when there is a gap", () => {
-    const gap = new Date(Date.now() - 5 * 86400000).toISOString().slice(0, 10);
+    const gap = shiftDate(localToday(), -5);
     const seeded: ScriptLabState = {
       ...emptyState,
       streak: 12,

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import XPBar from "./XPBar";
-import { todayStr } from "@/lib/gamification";
+import { greetingFor, isOnLocalDay, todayStr } from "@/lib/dates";
 
 export default function BuildStatusHUD() {
   const { state } = useScriptLab();
@@ -32,7 +32,7 @@ export default function BuildStatusHUD() {
       const todayRuns = script.runs.filter(
         (run) =>
           run.completed &&
-          new Date(run.at).toISOString().slice(0, 10) === today
+          isOnLocalDay(run.at, today)
       );
       return todayRuns.length > 0;
     })
@@ -66,7 +66,7 @@ export default function BuildStatusHUD() {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       <div>
         <div className="text-xs text-muted uppercase tracking-[0.4em]">
-          Good morning, {state.profile?.name ?? "developer"}.
+          {greetingFor()}, {state.profile?.name ?? "developer"}.
         </div>
         <h1 className="text-3xl text-matrix crt-text font-bold">
           /dev/self · build status
@@ -142,7 +142,7 @@ export default function BuildStatusHUD() {
             </div>
             <Link
               href="/profile"
-              className="text-xs text-matrix hover:crt-text"
+              className="inline-flex items-center min-h-11 text-xs text-matrix hover:crt-text"
             >
               edit →
             </Link>

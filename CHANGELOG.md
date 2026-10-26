@@ -10,6 +10,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+### Fixed
+- **Local calendar days.** Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the user's local date. They no longer flip to the next day in the evening (after 00:00 UTC).
+- **Import validation.** Invalid JSON and wrong-shaped files show the real error and leave current data alone. A backup import asks before it overwrites existing data.
+- **Day Builder on touch.** Tap a script, then tap an hour to place it. Drag still works with a pointer.
+- **Timer survives navigation.** The running session is stored with a start timestamp and the time left is derived from the clock. A chime plays when it finishes if the browser has allowed sound.
+- **Greeting follows the local hour** (morning, afternoon, evening).
+- **Touch targets.** The mobile menu, library rows, and history filters are at least 44px tall.
+
 ### Added
 - **Profile editor (`/profile`)** — edit developer name, wake-up statements (add / remove), core values, and goals after onboarding. Linked from the nav bar, the HUD's "wake-up statements" panel, and the command palette. Writes through the existing `setProfile` action; recommendations and the splash echo update on next render.
 - **Splash wake-up echo** — after the boot log finishes, the splash renders one of the user's wake-up statements in italic CRT text as a "why you booted" banner. Picked at random on each visit.

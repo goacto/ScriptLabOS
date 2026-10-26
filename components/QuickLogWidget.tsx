@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { calendarDaysBetween, instantToLocalDate, todayStr } from "@/lib/dates";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import type { GssFile } from "@/lib/types";
 
 export default function QuickLogWidget() {
   const { state, dispatch } = useScriptLab();
@@ -16,28 +16,19 @@ export default function QuickLogWidget() {
 
   // Calculate days clean and status for each script
   const scriptStats = useMemo(() => {
-    const now = new Date();
+    const today = todayStr();
     return badScripts.map((script) => {
       const tallies = script.runs.length;
       const lastRun = script.runs.length > 0
         ? script.runs[script.runs.length - 1]
         : null;
 
-      let daysClean = 0;
-      let isEliminated = false;
-
-      if (lastRun) {
-        const lastRunDate = new Date(lastRun.at);
-        const diffMs = now.getTime() - lastRunDate.getTime();
-        daysClean = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        isEliminated = daysClean >= 21;
-      } else {
-        // Never run, calculate from creation
-        const createdDate = new Date(script.createdAt);
-        const diffMs = now.getTime() - createdDate.getTime();
-        daysClean = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        isEliminated = daysClean >= 21;
-      }
+      const anchor = lastRun ? lastRun.at : script.createdAt;
+      const daysClean = Math.max(
+        0,
+        calendarDaysBetween(instantToLocalDate(anchor), today)
+      );
+      const isEliminated = daysClean >= 21;
 
       return {
         script,

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ScriptLabProvider } from "@/lib/ScriptLabProvider";
+import { TimerProvider } from "@/components/TimerProvider";
 import AchievementToasts from "@/components/AchievementToasts";
 import CommandPalette from "@/components/CommandPalette";
+import RunningTimerChip from "@/components/RunningTimerChip";
 
 export const metadata: Metadata = {
   title: "ScriptLabOS by GOACTO",
@@ -36,9 +38,12 @@ export default function RootLayout({
       </head>
       <body className="scanlines">
         <ScriptLabProvider>
-          {children}
-          <AchievementToasts />
-          <CommandPalette />
+          <TimerProvider>
+            {children}
+            <RunningTimerChip />
+            <AchievementToasts />
+            <CommandPalette />
+          </TimerProvider>
         </ScriptLabProvider>
       </body>
     </html>
