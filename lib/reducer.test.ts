@@ -128,6 +128,19 @@ describe("reducer: reset + importAll", () => {
     expect(next.xp).toBe(999);
     expect(next.profile?.name).toBe("neo");
   });
+
+  it("importAll keeps the current state when the payload has the wrong shape", () => {
+    const seeded = reducer(emptyState, {
+      type: "addScript",
+      script: baseline(),
+    });
+    const next = reducer(seeded, {
+      type: "importAll",
+      state: { hello: "world" } as unknown as ScriptLabState,
+    });
+    expect(next).toBe(seeded);
+    expect(next.scripts).toHaveLength(1);
+  });
 });
 
 const bug = (overrides: Partial<GssFile> = {}): GssFile =>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon } from "@/lib/gss";
+import { calendarDaysBetween, instantToLocalDate, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
 import { isRelapse } from "@/lib/cleanStreak";
 import type { SessionReview } from "@/lib/types";
@@ -186,10 +187,10 @@ export default function HistoryPage() {
   if (!hydrated || !state.profile) return null;
 
   const formatTimestamp = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffDays = calendarDaysBetween(
+      instantToLocalDate(timestamp),
+      todayStr()
+    );
 
     if (diffDays === 0) return "today";
     if (diffDays === 1) return "yesterday";

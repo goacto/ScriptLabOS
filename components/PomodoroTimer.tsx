@@ -5,49 +5,73 @@ import { useSearchParams } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon, typeLabel } from "@/lib/gss";
 import { xpForRun } from "@/lib/gamification";
-
-function fmt(s: number) {
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${String(m).padStart(2, "0")}:${String(r).padStart(2, "0")}`;
-}
+import { primeChime } from "@/lib/chime";
+import { formatClock, secondsLeft } from "@/lib/timer";
+import { useTimer } from "./TimerProvider";
 
 export default function PomodoroTimer() {
   const { state, dispatch } = useScriptLab();
+  const { ready, now, session, begin, pause, reset } = useTimer();
   const searchParams = useSearchParams();
   const queryId = searchParams.get("id");
-  const [scriptId, setScriptId] = useState<string | null>(
-    queryId ??
-      state.scripts.find((s) => s.type !== "bug" && s.type !== "virus")?.id ??
-      null
-  );
+  const [scriptId, setScriptId] = useState<string | null>(queryId);
   const [showPomodoroInfo, setShowPomodoroInfo] = useState(false);
-
-  useEffect(() => {
-    if (queryId && queryId !== scriptId) setScriptId(queryId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryId]);
-  const script = state.scripts.find((s) => s.id === scriptId) ?? null;
-  const [remaining, setRemaining] = useState(
-    (script?.durationMin ?? 25) * 60
-  );
-  const [running, setRunning] = useState(false);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
-  const [showReflection, setShowReflection] = useState(false);
   const [reflection, setReflection] = useState({
     whatWorked: "",
     whatDidnt: "",
     insights: "",
   });
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const booted = useRef(false);
+  const seenQuery = useRef<string | null | undefined>(undefined);
+
+  const script = state.scripts.find((s) => s.id === scriptId) ?? null;
+  const active =
+    session && script && session.scriptId === script.id ? session : null;
+  const remaining = active
+    ? secondsLeft(active, now || Date.now())
+    : (script?.durationMin ?? 25) * 60;
+  const running = active?.status === "running";
+  const paused = active?.status === "paused";
+  const showReflection = active?.status === "complete";
 
   useEffect(() => {
-    if (script) setRemaining(script.durationMin * 60);
+    if (!ready || booted.current) return;
+    booted.current = true;
+    const runnable = state.scripts.find(
+      (s) => s.type !== "bug" && s.type !== "virus"
+    );
+    const restored =
+      session &&
+      session.status !== "idle" &&
+      state.scripts.some((s) => s.id === session.scriptId)
+        ? session.scriptId
+        : null;
+    setScriptId(
+      restored ??
+        (queryId && state.scripts.some((s) => s.id === queryId) ? queryId : null) ??
+        runnable?.id ??
+        null
+    );
+  }, [ready, session, queryId, state.scripts]);
+
+  useEffect(() => {
+    if (!ready) return;
+    if (seenQuery.current === queryId) return;
+    const previous = seenQuery.current;
+    seenQuery.current = queryId;
+    if (previous === undefined) return;
+    if (!queryId) return;
+    if (session && session.scriptId !== queryId && session.status !== "idle") {
+      setScriptId(session.scriptId);
+      return;
+    }
+    setScriptId(queryId);
+  }, [queryId, ready, session]);
+
+  useEffect(() => {
     setChecked({});
-    setRunning(false);
-    setShowReflection(false);
-    setReflection({ whatWorked: "", whatDidnt: "", insights: "" });
-  }, [scriptId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scriptId]);
 
   const handleReflectionSubmit = () => {
     // Require at least one field to be filled
@@ -73,8 +97,8 @@ export default function PomodoroTimer() {
           insights: reflection.insights.trim(),
         },
       });
+      reset(script.id, script.durationMin * 60);
     }
-    setShowReflection(false);
     setReflection({ whatWorked: "", whatDidnt: "", insights: "" });
   };
 
@@ -83,41 +107,17 @@ export default function PomodoroTimer() {
     reflection.whatDidnt.trim() ||
     reflection.insights.trim();
 
-  useEffect(() => {
-    if (running) {
-      timerRef.current = setInterval(() => {
-        setRemaining((r) => {
-          if (r <= 1) {
-            if (timerRef.current) clearInterval(timerRef.current);
-            setRunning(false);
-            setShowReflection(true);
-            return 0;
-          }
-          return r - 1;
-        });
-      }, 1000);
-    } else if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [running, script, dispatch]);
-
   const handleBail = () => {
-    setRunning(false);
-    if (script) {
-      const elapsed = Math.max(
-        0,
-        script.durationMin - Math.floor(remaining / 60)
-      );
-      dispatch({
-        type: "recordRun",
-        scriptId: script.id,
-        completed: false,
-        durationMin: elapsed,
-      });
-    }
+    if (!script) return;
+    const left = active ? secondsLeft(active, Date.now()) : remaining;
+    pause();
+    const elapsed = Math.max(0, script.durationMin - Math.floor(left / 60));
+    dispatch({
+      type: "recordRun",
+      scriptId: script.id,
+      completed: false,
+      durationMin: elapsed,
+    });
   };
 
   const percent = script
@@ -269,7 +269,16 @@ export default function PomodoroTimer() {
         <label className="text-xs text-muted">select script</label>
         <select
           value={scriptId ?? ""}
-          onChange={(e) => setScriptId(e.target.value || null)}
+          onChange={(e) => {
+            const id = e.target.value || null;
+            setScriptId(id);
+            if (!id) return;
+            const next = state.scripts.find((s) => s.id === id);
+            if (!next) return;
+            if (session?.scriptId === id && session.status !== "idle") return;
+            reset(id, next.durationMin * 60);
+            setReflection({ whatWorked: "", whatDidnt: "", insights: "" });
+          }}
         >
           <option value="">— choose a .gss —</option>
           {state.scripts
@@ -296,8 +305,8 @@ export default function PomodoroTimer() {
           </div>
 
           <div className="text-center my-8">
-            <div className="text-matrix crt-text text-7xl font-bold tabular-nums">
-              {fmt(remaining)}
+            <div className="text-matrix crt-text text-7xl font-bold tabular-nums" data-testid="timer-clock">
+              {formatClock(remaining)}
             </div>
             <div className="h-2 bg-bg-elev mt-6 rounded-full overflow-hidden border border-matrix/20">
               <div
@@ -311,22 +320,25 @@ export default function PomodoroTimer() {
             {!running ? (
               <button
                 className="btn btn-primary"
-                onClick={() => setRunning(true)}
+                onClick={() => {
+                  primeChime();
+                  begin(script.id, script.durationMin * 60);
+                }}
                 disabled={remaining === 0}
               >
-                ▶ start
+                {paused ? "▶ resume" : "▶ start"}
               </button>
             ) : (
-              <button className="btn" onClick={() => setRunning(false)}>
+              <button className="btn" onClick={() => pause()}>
                 ⏸ pause
               </button>
             )}
             <button
               className="btn"
               onClick={() => {
-                setRunning(false);
-                setRemaining(script.durationMin * 60);
+                reset(script.id, script.durationMin * 60);
                 setChecked({});
+                setReflection({ whatWorked: "", whatDidnt: "", insights: "" });
               }}
             >
               ⟲ reset

@@ -4,6 +4,16 @@ All notable changes to **ScriptLabOS by GOACTO** are documented here.
 
 ---
 
+## Fixes
+
+- Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the local calendar day instead of UTC.
+- Importing a file checks that it is a ScriptLabOS backup. Invalid JSON and wrong-shaped files show an error and do not replace your data. Overwriting existing data asks first.
+- Day Builder can be planned by tapping a script and then an hour.
+- The Pomodoro timer keeps running while you move between pages, and plays a chime at the end when the browser allows sound.
+- The dashboard greeting follows the time of day.
+
+---
+
 ## 📦 Version 0.2.0 — Coming Soon
 
 ### 🎯 New Features

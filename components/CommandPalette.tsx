@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { makeGss } from "@/lib/gss";
+import { todayStr } from "@/lib/dates";
 import { exportState, resetState } from "@/lib/storage";
 import type { GssType } from "@/lib/types";
 
@@ -79,7 +80,7 @@ export default function CommandPalette() {
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `scriptlabos-${new Date().toISOString().slice(0, 10)}.json`;
+          a.download = `scriptlabos-${todayStr()}.json`;
           a.click();
           URL.revokeObjectURL(url);
         },
@@ -97,7 +98,7 @@ export default function CommandPalette() {
         },
       },
     ];
-    state.scripts.forEach((s) => {
+    (state.scripts ?? []).forEach((s) => {
       base.push({
         id: `run-${s.id}`,
         label: `Run "${s.title}"`,
