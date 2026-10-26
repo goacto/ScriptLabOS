@@ -36,8 +36,8 @@ export default function ProfileEditor() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div className="min-w-0">
           <h1 className="text-2xl text-matrix crt-text font-bold">
             /profile — edit your OS
           </h1>
@@ -46,10 +46,10 @@ export default function ProfileEditor() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="btn" onClick={cancel}>
+          <button className="btn min-h-11" onClick={cancel}>
             cancel
           </button>
-          <button className="btn btn-primary" onClick={save}>
+          <button className="btn btn-primary min-h-11" onClick={save}>
             save
           </button>
         </div>
@@ -69,7 +69,7 @@ export default function ProfileEditor() {
             </div>
           </div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() =>
               setWakeUps((l) => [...l, { id: uid(), text: "" }])
             }
@@ -90,6 +90,7 @@ export default function ProfileEditor() {
               </span>
               <textarea
                 rows={2}
+                className="min-w-0 flex-1"
                 value={w.text}
                 onChange={(e) =>
                   setWakeUps((list) =>
@@ -100,7 +101,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setWakeUps((l) => l.filter((x) => x.id !== w.id))
                 }
@@ -116,7 +117,7 @@ export default function ProfileEditor() {
         <div className="flex justify-between items-baseline mb-3">
           <div className="text-matrix font-bold">Core Values</div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() => setValues((l) => [...l, ""])}
           >
             + add
@@ -126,6 +127,7 @@ export default function ProfileEditor() {
           {values.map((v, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
+                className="min-w-0 flex-1"
                 value={v}
                 placeholder={`value ${i + 1}`}
                 onChange={(e) =>
@@ -135,7 +137,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setValues((arr) => arr.filter((_, j) => j !== i))
                 }
@@ -151,7 +153,7 @@ export default function ProfileEditor() {
         <div className="flex justify-between items-baseline mb-3">
           <div className="text-matrix font-bold">Goals</div>
           <button
-            className="btn !py-1 text-xs"
+            className="btn !py-2 text-xs min-h-11"
             onClick={() => setGoals((l) => [...l, ""])}
           >
             + add
@@ -161,6 +163,7 @@ export default function ProfileEditor() {
           {goals.map((g, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
+                className="min-w-0 flex-1"
                 value={g}
                 placeholder={`goal ${i + 1}`}
                 onChange={(e) =>
@@ -170,7 +173,7 @@ export default function ProfileEditor() {
                 }
               />
               <button
-                className="btn btn-danger !py-1 !px-2 text-xs"
+                className="btn btn-danger !py-2 !px-3 text-xs min-h-11 min-w-11 shrink-0"
                 onClick={() =>
                   setGoals((arr) => arr.filter((_, j) => j !== i))
                 }

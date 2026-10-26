@@ -75,12 +75,12 @@ export default function LibraryPage() {
     <>
       <NavBar />
       <div className="max-w-6xl mx-auto px-4 py-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <h1 className="text-2xl text-matrix crt-text font-bold">
             /library — .gss editor
           </h1>
           <button
-            className="btn text-xs"
+            className="btn text-xs min-h-11"
             onClick={() => setShowTemplates((v) => !v)}
           >
             {showTemplates ? "hide" : "import"} templates
@@ -155,7 +155,7 @@ export default function LibraryPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 h-[70vh]">
+        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-4 md:h-[70vh]">
           <FileTree
             scripts={state.scripts}
             selectedId={selectedId}

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { xpForRun } from "@/lib/gamification";
 
@@ -77,13 +78,9 @@ export default function AnalyticsPage() {
   if (!hydrated || !state.profile) return null;
 
   return (
+    <>
+    <NavBar />
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <button
-        onClick={() => router.push("/dashboard")}
-        className="text-sm text-muted hover:text-matrix transition-colors mb-4 flex items-center gap-1"
-      >
-        ← Back to Dashboard
-      </button>
       <h1 className="text-2xl text-matrix crt-text font-bold mb-1">
         /analytics — Performance Dashboard
       </h1>
@@ -277,5 +274,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
