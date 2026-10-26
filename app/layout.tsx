@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ScriptLabProvider } from "@/lib/ScriptLabProvider";
+import { TimerProvider } from "@/components/TimerProvider";
 import AchievementToasts from "@/components/AchievementToasts";
 import CommandPalette from "@/components/CommandPalette";
+import RunningTimerChip from "@/components/RunningTimerChip";
 import UsagePing from "@/components/UsagePing";
 
 export const metadata: Metadata = {
@@ -52,10 +54,13 @@ export default function RootLayout({
       </head>
       <body className="scanlines">
         <ScriptLabProvider>
-          {children}
-          <AchievementToasts />
-          <CommandPalette />
-          <UsagePing />
+          <TimerProvider>
+            {children}
+            <RunningTimerChip />
+            <AchievementToasts />
+            <CommandPalette />
+            <UsagePing />
+          </TimerProvider>
         </ScriptLabProvider>
       </body>
     </html>

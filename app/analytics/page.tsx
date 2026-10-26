@@ -3,6 +3,7 @@
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
+import { formatMonthDay, instantToLocalDate, lastNDates } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
 import { isRelapse } from "@/lib/cleanStreak";
 
@@ -16,17 +17,12 @@ export default function AnalyticsPage() {
   }, [hydrated, state.profile, router]);
 
   const analytics = useMemo(() => {
-    const today = new Date();
-    const last30Days = Array.from({ length: 30 }, (_, i) => {
-      const date = new Date(today);
-      date.setDate(date.getDate() - (29 - i));
-      return date.toISOString().slice(0, 10);
-    });
+    const last30Days = lastNDates(30);
 
     const dailyStats = last30Days.map((date) => {
       const dayRuns = state.scripts.flatMap((script) =>
         script.runs
-          .filter((run) => new Date(run.at).toISOString().slice(0, 10) === date)
+          .filter((run) => instantToLocalDate(run.at) === date)
           .map((run) => ({
             ...run,
             scriptType: script.type,
@@ -157,10 +153,7 @@ export default function AnalyticsPage() {
                 {/* Tooltip */}
                 <div className="opacity-0 group-hover:opacity-100 absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-bg-elev border border-matrix/30 rounded px-2 py-1 text-xs whitespace-nowrap pointer-events-none z-10">
                   <div className="text-matrix font-bold">
-                    {new Date(day.date).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })}
+                    {formatMonthDay(day.date)}
                   </div>
                   <div className="text-ink/90">{day.xpEarned} XP</div>
                   <div className="text-muted text-[10px]">
@@ -174,10 +167,7 @@ export default function AnalyticsPage() {
 
         <div className="flex justify-between mt-2 text-[10px] text-muted">
           <span>
-            {new Date(analytics.dailyStats[0].date).toLocaleDateString(
-              "en-US",
-              { month: "short", day: "numeric" }
-            )}
+            {formatMonthDay(analytics.dailyStats[0].date)}
           </span>
           <span>Today</span>
         </div>

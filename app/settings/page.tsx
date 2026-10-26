@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import { exportState, resetState } from "@/lib/storage";
+import { todayStr } from "@/lib/dates";
+import { exportState, resetState, resolveImport } from "@/lib/storage";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import TutorialViewer from "@/components/TutorialViewer";
 import UsageToggle from "@/components/UsageToggle";
@@ -16,6 +17,8 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [viewingDoc, setViewingDoc] = useState<DocType>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -51,22 +54,32 @@ export default function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `scriptlabos-${state.profile?.name ?? "dev"}-${new Date()
-      .toISOString()
-      .slice(0, 10)}.json`;
+    a.download = `scriptlabos-${state.profile?.name ?? "dev"}-${todayStr()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const onImport = async (file: File) => {
-    const text = await file.text();
+    setImportError(null);
+    setImportMessage(null);
+    let text: string;
     try {
-      const parsed = JSON.parse(text);
-      dispatch({ type: "importAll", state: parsed });
-      alert("Import successful!");
+      text = await file.text();
     } catch {
-      alert("Invalid file.");
+      setImportError("Couldn't read that file. Choose a ScriptLabOS export and try again.");
+      return;
     }
+    const decision = resolveImport(text, state, (message) => window.confirm(message));
+    if (!decision.ok) {
+      if (decision.cancelled) {
+        setImportMessage("Import cancelled. Your current data was kept.");
+      } else {
+        setImportError(decision.error);
+      }
+      return;
+    }
+    dispatch({ type: "importAll", state: decision.state });
+    setImportMessage("Import successful. Your backup replaced the data on this browser.");
   };
 
   const onReset = () => {
@@ -166,15 +179,30 @@ export default function SettingsPage() {
                 ⬆ Import
                 <input
                   type="file"
-                  accept="application/json"
+                  accept="application/json,.json"
                   className="hidden"
                   onChange={(e) => {
                     const f = e.target.files?.[0];
-                    if (f) onImport(f);
+                    e.target.value = "";
+                    if (f) void onImport(f);
                   }}
                 />
               </label>
             </div>
+            {importError && (
+              <div
+                role="alert"
+                data-testid="import-error"
+                className="text-sm text-virus border border-virus/40 bg-virus/10 rounded px-3 py-2"
+              >
+                {importError}
+              </div>
+            )}
+            {importMessage && (
+              <div role="status" className="text-sm text-matrix">
+                {importMessage}
+              </div>
+            )}
 
             <div className="flex items-center justify-between pt-1">
               <div>

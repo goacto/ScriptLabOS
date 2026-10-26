@@ -1,17 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { uid, typeIcon } from "@/lib/gss";
+import { isOnLocalDay, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
 import { canShipDay } from "@/lib/reflection";
 import type { Executable, ExecutableSlot } from "@/lib/types";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i); // 05:00 – 22:00
 
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
-}
+type PaletteItem = { kind: "script" | "package"; id: string };
 
 export default function DayBuilder() {
   const { state, dispatch } = useScriptLab();
@@ -35,9 +34,9 @@ export default function DayBuilder() {
     challenges: "",
     tomorrowFocus: "",
   });
-  const [drag, setDrag] = useState<
-    { kind: "script" | "package"; id: string } | null
-  >(null);
+  const [drag, setDrag] = useState<PaletteItem | null>(null);
+  const [picked, setPicked] = useState<PaletteItem | null>(null);
+  const suppressClick = useRef(false);
 
   // Create lookup maps first
   const scriptById = useMemo(
@@ -66,8 +65,7 @@ export default function DayBuilder() {
       .filter((script) => {
         const todayRuns = script.runs.filter(
           (run) =>
-            run.completed &&
-            new Date(run.at).toISOString().slice(0, 10) === today
+            run.completed && isOnLocalDay(run.at, today)
         );
         return todayRuns.length > 0;
       })
@@ -143,6 +141,48 @@ export default function DayBuilder() {
     update({ ...exe, slots: exe.slots.map((s, j) => (i === j ? slot : s)) });
   };
 
+  const placeItem = (index: number, item: PaletteItem) => {
+    const newSlot: ExecutableSlot = {
+      time: exe.slots[index].time,
+      scriptId: item.kind === "script" ? item.id : undefined,
+      packageId: item.kind === "package" ? item.id : undefined,
+    };
+    let durationMin = 0;
+    if (item.kind === "script" && scriptById[item.id]) {
+      durationMin = scriptById[item.id].durationMin;
+    } else if (item.kind === "package" && pkgById[item.id]) {
+      durationMin = pkgById[item.id].scriptIds.reduce(
+        (acc, id) => acc + (scriptById[id]?.durationMin ?? 0),
+        0
+      );
+    }
+    const slotsNeeded = Math.ceil(durationMin / 60);
+    const newSlots = [...exe.slots];
+    newSlots[index] = newSlot;
+    for (let j = 1; j < slotsNeeded; j++) {
+      if (index + j < newSlots.length) {
+        newSlots[index + j] = { time: newSlots[index + j].time };
+      }
+    }
+    update({ ...exe, slots: newSlots });
+    setDrag(null);
+    setPicked(null);
+  };
+
+  const togglePick = (item: PaletteItem) => {
+    setPicked((current) =>
+      current && current.kind === item.kind && current.id === item.id
+        ? null
+        : item
+    );
+  };
+
+  const pickedLabel = picked
+    ? picked.kind === "script"
+      ? scriptById[picked.id]?.title ?? "script"
+      : pkgById[picked.id]?.title ?? "package"
+    : null;
+
   const canShip = canShipDay(dailyReflection);
 
   const startDay = () => {
@@ -158,8 +198,7 @@ export default function DayBuilder() {
       .filter((script) => {
         const todayRuns = script.runs.filter(
           (run) =>
-            run.completed &&
-            new Date(run.at).toISOString().slice(0, 10) === today
+            run.completed && isOnLocalDay(run.at, today)
         );
         return todayRuns.length > 0;
       })
@@ -181,7 +220,7 @@ export default function DayBuilder() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex-1">
           <h1 className="text-2xl text-matrix crt-text font-bold">
             /day — Daily Build Plan
@@ -339,10 +378,15 @@ export default function DayBuilder() {
       )}
 
       <div className="grid md:grid-cols-[260px_1fr] gap-4">
-        <div className="panel p-3 h-fit sticky top-20">
+        <div className="panel p-3 h-fit md:sticky md:top-20">
           <div className="text-xs text-muted uppercase tracking-widest mb-2">
-            // drag a .gss or 📦
+            // tap or drag a .gss or 📦
           </div>
+          {pickedLabel && (
+            <div className="text-xs text-matrix mb-2">
+              Selected {pickedLabel}. Tap an hour to add it.
+            </div>
+          )}
           <ul className="space-y-1 text-sm max-h-[70vh] overflow-y-auto">
             {state.packages.map((p) => {
               const min = p.scriptIds.reduce(
@@ -350,30 +394,71 @@ export default function DayBuilder() {
                 0
               );
               return (
-                <li
-                  key={p.id}
-                  draggable
-                  onDragStart={() => setDrag({ kind: "package", id: p.id })}
-                  onDragEnd={() => setDrag(null)}
-                  className="px-2 py-1 border border-matrix/30 rounded hover:bg-matrix/10 cursor-grab"
-                >
+                <li key={p.id}>
+                  <button
+                    type="button"
+                    draggable
+                    data-testid={`palette-${p.id}`}
+                    aria-pressed={picked?.kind === "package" && picked.id === p.id}
+                    onDragStart={(e) => {
+                      suppressClick.current = true;
+                      setDrag({ kind: "package", id: p.id });
+                      e.dataTransfer?.setData("text/plain", p.id);
+                    }}
+                    onDragEnd={() => {
+                      setDrag(null);
+                      setTimeout(() => {
+                        suppressClick.current = false;
+                      }, 0);
+                    }}
+                    onClick={() => {
+                      if (suppressClick.current) return;
+                      togglePick({ kind: "package", id: p.id });
+                    }}
+                    className={`w-full text-left min-h-11 px-2 py-2 border rounded cursor-pointer ${
+                      picked?.kind === "package" && picked.id === p.id
+                        ? "border-matrix bg-matrix/15"
+                        : "border-matrix/30 hover:bg-matrix/10"
+                    }`}
+                  >
                   📦 {p.title}
                   <span className="text-xs text-muted ml-2">
                     {p.scriptIds.length} · {min}m
                   </span>
+                  </button>
                 </li>
               );
             })}
             {state.scripts
               .filter((s) => s.type !== "bug" && s.type !== "virus")
               .map((s) => (
-                <li
-                  key={s.id}
-                  draggable
-                  onDragStart={() => setDrag({ kind: "script", id: s.id })}
-                  onDragEnd={() => setDrag(null)}
-                  className="px-2 py-1 border border-matrix/20 rounded hover:bg-matrix/10 cursor-grab"
-                >
+                <li key={s.id}>
+                  <button
+                    type="button"
+                    draggable
+                    data-testid={`palette-${s.id}`}
+                    aria-pressed={picked?.kind === "script" && picked.id === s.id}
+                    onDragStart={(e) => {
+                      suppressClick.current = true;
+                      setDrag({ kind: "script", id: s.id });
+                      e.dataTransfer?.setData("text/plain", s.id);
+                    }}
+                    onDragEnd={() => {
+                      setDrag(null);
+                      setTimeout(() => {
+                        suppressClick.current = false;
+                      }, 0);
+                    }}
+                    onClick={() => {
+                      if (suppressClick.current) return;
+                      togglePick({ kind: "script", id: s.id });
+                    }}
+                    className={`w-full text-left min-h-11 px-2 py-2 border rounded cursor-pointer ${
+                      picked?.kind === "script" && picked.id === s.id
+                        ? "border-matrix bg-matrix/15"
+                        : "border-matrix/20 hover:bg-matrix/10"
+                    }`}
+                  >
                   <span className="text-[10px] text-muted mr-1">
                     {typeIcon[s.type]}
                   </span>
@@ -381,6 +466,7 @@ export default function DayBuilder() {
                   <span className="text-xs text-muted ml-2">
                     {s.durationMin}m
                   </span>
+                  </button>
                 </li>
               ))}
           </ul>
@@ -394,47 +480,28 @@ export default function DayBuilder() {
               return (
                 <li
                   key={i}
+                  data-testid={`day-slot-${slot.time}`}
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={() => {
-                    if (drag) {
-                      const newSlot: ExecutableSlot = {
-                        time: slot.time,
-                        scriptId: drag.kind === "script" ? drag.id : undefined,
-                        packageId:
-                          drag.kind === "package" ? drag.id : undefined,
-                      };
-
-                      // Calculate how many slots this item needs
-                      let durationMin = 0;
-                      if (drag.kind === "script" && scriptById[drag.id]) {
-                        durationMin = scriptById[drag.id].durationMin;
-                      } else if (drag.kind === "package" && pkgById[drag.id]) {
-                        durationMin = pkgById[drag.id].scriptIds.reduce(
-                          (acc, id) => acc + (scriptById[id]?.durationMin ?? 0),
-                          0
-                        );
-                      }
-
-                      const slotsNeeded = Math.ceil(durationMin / 60);
-                      const newSlots = [...exe.slots];
-
-                      // Set the dropped item in the current slot
-                      newSlots[i] = newSlot;
-
-                      // Clear the following slots that will be occupied
-                      for (let j = 1; j < slotsNeeded; j++) {
-                        if (i + j < newSlots.length) {
-                          newSlots[i + j] = { time: newSlots[i + j].time };
-                        }
-                      }
-
-                      update({ ...exe, slots: newSlots });
-                      setDrag(null);
+                    if (drag) placeItem(i, drag);
+                  }}
+                  onClick={() => {
+                    if (picked) placeItem(i, picked);
+                  }}
+                  onKeyDown={(e) => {
+                    if (!picked) return;
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      placeItem(i, picked);
                     }
                   }}
-                  className={`flex items-center gap-3 border-b border-matrix/10 py-2 ${
+                  tabIndex={picked ? 0 : undefined}
+                  aria-label={
+                    pickedLabel ? `Add ${pickedLabel} at ${slot.time}` : undefined
+                  }
+                  className={`flex items-center gap-3 border-b border-matrix/10 py-2 min-h-11 ${
                     overlaps.has(i) ? "bg-amber-bug/10" : ""
-                  } ${drag ? "hover:bg-matrix/10" : ""}`}
+                  } ${drag || picked ? "hover:bg-matrix/10 cursor-pointer" : ""}`}
                 >
                   <span className="text-matrix-dim w-14 text-sm">
                     {slot.time}
@@ -451,8 +518,11 @@ export default function DayBuilder() {
                         </span>
                       </span>
                       <button
-                        className="btn btn-danger !py-0.5 !px-2 text-xs"
-                        onClick={() => setSlot(i, { time: slot.time })}
+                        className="btn btn-danger !py-1 !px-3 text-xs min-h-11"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSlot(i, { time: slot.time });
+                        }}
                       >
                         clear
                       </button>
@@ -467,15 +537,20 @@ export default function DayBuilder() {
                         </span>
                       </span>
                       <button
-                        className="btn btn-danger !py-0.5 !px-2 text-xs"
-                        onClick={() => setSlot(i, { time: slot.time })}
+                        className="btn btn-danger !py-1 !px-3 text-xs min-h-11"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSlot(i, { time: slot.time });
+                        }}
                       >
                         clear
                       </button>
                     </>
                   ) : (
                     <span className="flex-1 text-xs text-muted italic">
-                      — empty — drop a script or 📦 here —
+                      {pickedLabel
+                        ? `— tap to add ${pickedLabel} —`
+                        : "— tap a script, then tap here — or drop one —"}
                     </span>
                   )}
                 </li>

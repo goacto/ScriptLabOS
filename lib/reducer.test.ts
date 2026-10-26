@@ -96,6 +96,7 @@ describe("reducer: passDay", () => {
     const seeded: ScriptLabState = { ...emptyState, profile };
     const once = reducer(seeded, { type: "passDay" });
     expect(once.streak).toBe(1);
+    expect(once.executables).toEqual([]);
     expect(once.achievements.find((a) => a.id === "first-compile")).toBeTruthy();
 
     const twice = reducer(once, { type: "passDay" });
@@ -126,6 +127,19 @@ describe("reducer: reset + importAll", () => {
     const next = reducer(emptyState, { type: "importAll", state: imported });
     expect(next.xp).toBe(999);
     expect(next.profile?.name).toBe("neo");
+  });
+
+  it("importAll keeps the current state when the payload has the wrong shape", () => {
+    const seeded = reducer(emptyState, {
+      type: "addScript",
+      script: baseline(),
+    });
+    const next = reducer(seeded, {
+      type: "importAll",
+      state: { hello: "world" } as unknown as ScriptLabState,
+    });
+    expect(next).toBe(seeded);
+    expect(next.scripts).toHaveLength(1);
   });
 });
 

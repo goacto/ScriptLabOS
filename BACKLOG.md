@@ -32,8 +32,6 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 - [ ] **E2E** — a Playwright smoke test that runs the onboarding → create script → start timer → compile day flow.
 - [ ] **ESLint config** — `next lint` currently uses Next's defaults; tighten with `@typescript-eslint` strict rules.
 - [ ] **A11y pass** — the IDE look is keyboard-unfriendly in places (file tree focus ring, modal dialogs). Audit with axe.
-- [ ] **Mobile polish** — the Day Builder drag-and-drop is desktop-first; add a tap-to-select fallback for touch.
-- [ ] **Time-zone handling** — `todayStr()` currently uses UTC; should use the user's local date.
 
 ## Known bugs
 
