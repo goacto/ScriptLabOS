@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon } from "@/lib/gss";
 import { calendarDaysBetween, instantToLocalDate, todayStr } from "@/lib/dates";
@@ -210,13 +211,9 @@ export default function HistoryPage() {
   };
 
   return (
+    <>
+    <NavBar />
     <div className="max-w-5xl mx-auto px-4 py-6">
-      <button
-        onClick={() => router.push("/dashboard")}
-        className="text-sm text-muted hover:text-matrix transition-colors mb-4 flex items-center gap-1"
-      >
-        ← Back to Dashboard
-      </button>
       <div className="mb-6">
         <h1 className="text-2xl text-matrix crt-text font-bold mb-1">
           /history — Commit Log
@@ -227,27 +224,27 @@ export default function HistoryPage() {
       </div>
 
       {/* Stats Bar */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="panel p-3 text-center">
-          <div className="text-xs text-muted mb-1">Total Events</div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 mb-6">
+        <div className="panel p-3 text-center min-w-0">
+          <div className="text-xs text-muted mb-1 leading-tight">Total Events</div>
           <div className="text-xl font-bold text-matrix">
             {commitLog.length}
           </div>
         </div>
-        <div className="panel p-3 text-center">
-          <div className="text-xs text-muted mb-1">Runs</div>
+        <div className="panel p-3 text-center min-w-0">
+          <div className="text-xs text-muted mb-1 leading-tight">Runs</div>
           <div className="text-xl font-bold text-matrix">
             {stats.completedRuns}
           </div>
         </div>
-        <div className="panel p-3 text-center">
-          <div className="text-xs text-muted mb-1">Achievements</div>
+        <div className="panel p-3 text-center min-w-0">
+          <div className="text-xs text-muted mb-1 leading-tight">Achievements</div>
           <div className="text-xl font-bold text-matrix">
             {stats.totalAchievements}
           </div>
         </div>
-        <div className="panel p-3 text-center">
-          <div className="text-xs text-muted mb-1">Builds Shipped</div>
+        <div className="panel p-3 text-center min-w-0">
+          <div className="text-xs text-muted mb-1 leading-tight">Builds Shipped</div>
           <div className="text-xl font-bold text-matrix">
             {stats.totalBuilds}
           </div>
@@ -274,7 +271,7 @@ export default function HistoryPage() {
           placeholder="Search commits..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 min-w-[200px] !py-1 text-sm"
+          className="w-full sm:flex-1 sm:min-w-[200px] min-h-11 text-sm"
         />
       </div>
 
@@ -458,5 +455,6 @@ export default function HistoryPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

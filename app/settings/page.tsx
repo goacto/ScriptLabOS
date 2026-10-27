@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { todayStr } from "@/lib/dates";
 import { exportState, resetState, resolveImport } from "@/lib/storage";
@@ -102,13 +103,9 @@ export default function SettingsPage() {
   );
 
   return (
+    <>
+    <NavBar />
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <button
-        onClick={() => router.push("/dashboard")}
-        className="text-sm text-muted hover:text-matrix transition-colors mb-4 flex items-center gap-1"
-      >
-        ← Back to Dashboard
-      </button>
       <h1 className="text-2xl text-matrix crt-text font-bold mb-1">
         /settings — OS configuration
       </h1>
@@ -350,5 +347,6 @@ export default function SettingsPage() {
 
       {showTutorial && <TutorialViewer onClose={() => setShowTutorial(false)} />}
     </div>
+    </>
   );
 }

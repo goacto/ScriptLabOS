@@ -316,7 +316,7 @@ export default function PomodoroTimer() {
             </div>
           </div>
 
-          <div className="flex gap-2 justify-center mb-8">
+          <div className="flex flex-wrap gap-2 justify-center mb-8">
             {!running ? (
               <button
                 className="btn btn-primary"
@@ -343,8 +343,8 @@ export default function PomodoroTimer() {
             >
               ⟲ reset
             </button>
-            <button className="btn btn-danger" onClick={handleBail}>
-              ✗ bail (log partial)
+            <button className="btn" onClick={handleBail}>
+              Log what I did
             </button>
           </div>
 

@@ -31,20 +31,20 @@ export default function ScriptEditor({
     setDraft((d) => ({ ...d, [k]: v }));
 
   return (
-    <div className="panel p-6 h-full overflow-y-auto">
-      <div className="flex items-center justify-between mb-4">
-        <div>
+    <div className="panel p-4 sm:p-6 h-full overflow-y-auto min-w-0">
+      <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <div className="text-xs text-muted">editing</div>
-          <div className="text-matrix crt-text text-xl">
+          <div className="text-matrix crt-text text-xl break-all">
             {draft.name}.gss
           </div>
         </div>
-        <div className="flex gap-2">
-          <button className="btn !py-1 text-xs" onClick={() => onDuplicate(script.id)}>
+        <div className="flex flex-wrap gap-2">
+          <button className="btn text-xs min-h-11" onClick={() => onDuplicate(script.id)}>
             duplicate
           </button>
           <button
-            className="btn btn-danger !py-1 text-xs"
+            className="btn btn-danger text-xs min-h-11"
             onClick={() => {
               if (
                 confirm(
@@ -57,7 +57,7 @@ export default function ScriptEditor({
             delete
           </button>
           <button
-            className="btn btn-primary !py-1 text-xs"
+            className="btn btn-primary text-xs min-h-11"
             disabled={!dirty}
             onClick={() =>
               onSave({ ...draft, updatedAt: new Date().toISOString() })
@@ -68,24 +68,27 @@ export default function ScriptEditor({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="min-w-0">
           <label className="text-xs text-muted">title</label>
           <input
+            className="min-w-0"
             value={draft.title}
             onChange={(e) => setField("title", e.target.value)}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="text-xs text-muted">file name</label>
           <input
+            className="min-w-0"
             value={draft.name}
             onChange={(e) => setField("name", e.target.value)}
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="text-xs text-muted">type</label>
           <select
+            className="min-w-0"
             value={draft.type}
             onChange={(e) => setField("type", e.target.value as GssType)}
           >
@@ -96,9 +99,10 @@ export default function ScriptEditor({
             ))}
           </select>
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="text-xs text-muted">duration (min)</label>
           <input
+            className="min-w-0"
             type="number"
             min={0}
             value={draft.durationMin}
@@ -129,12 +133,13 @@ export default function ScriptEditor({
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="min-w-0">
           <label className="text-xs text-muted">
             tags (comma separated)
           </label>
           <input
+            className="min-w-0"
             value={draft.tags.join(", ")}
             onChange={(e) =>
               setField(
@@ -147,9 +152,10 @@ export default function ScriptEditor({
             }
           />
         </div>
-        <div>
+        <div className="min-w-0">
           <label className="text-xs text-muted">linked value</label>
           <select
+            className="min-w-0"
             value={draft.linkedValue ?? ""}
             onChange={(e) =>
               setField("linkedValue", e.target.value || undefined)

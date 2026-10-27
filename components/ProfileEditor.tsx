@@ -36,8 +36,8 @@ export default function ProfileEditor() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6">
-      <div className="flex items-center justify-between mb-4">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div className="min-w-0">
           <h1 className="text-2xl text-matrix crt-text font-bold">
             /profile — edit your OS
           </h1>
@@ -46,10 +46,10 @@ export default function ProfileEditor() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="btn" onClick={cancel}>
+          <button className="btn min-h-11" onClick={cancel}>
             cancel
           </button>
-          <button className="btn btn-primary" onClick={save}>
+          <button className="btn btn-primary min-h-11" onClick={save}>
             save
           </button>
         </div>
@@ -90,6 +90,7 @@ export default function ProfileEditor() {
               </span>
               <textarea
                 rows={2}
+                className="min-w-0 flex-1"
                 value={w.text}
                 onChange={(e) =>
                   setWakeUps((list) =>
@@ -126,6 +127,7 @@ export default function ProfileEditor() {
           {values.map((v, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
+                className="min-w-0 flex-1"
                 value={v}
                 placeholder={`value ${i + 1}`}
                 onChange={(e) =>
@@ -161,6 +163,7 @@ export default function ProfileEditor() {
           {goals.map((g, i) => (
             <div key={i} className="flex gap-2 items-center">
               <input
+                className="min-w-0 flex-1"
                 value={g}
                 placeholder={`goal ${i + 1}`}
                 onChange={(e) =>

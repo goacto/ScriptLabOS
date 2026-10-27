@@ -30,7 +30,7 @@ export default function NavBar() {
     <>
       <header className="sticky top-0 z-30 panel border-0 border-b !rounded-none backdrop-blur overflow-x-hidden">
         <div className="max-w-6xl mx-auto flex items-center gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 py-3 text-sm">
-          <Link href="/dashboard" className="text-matrix crt-text font-bold whitespace-nowrap text-xs sm:text-sm flex-shrink-0">
+          <Link href="/dashboard" className="inline-flex items-center self-stretch text-matrix crt-text font-bold whitespace-nowrap text-xs sm:text-sm flex-shrink-0">
             &lt;/&gt; ScriptLabOS
           </Link>
 
@@ -110,7 +110,7 @@ export default function NavBar() {
                   key={n.href}
                   href={n.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`px-4 py-3 text-sm border-b border-matrix/10 ${
+                  className={`px-4 py-3 min-h-11 text-sm border-b border-matrix/10 ${
                     pathname === n.href
                       ? "bg-matrix/15 text-matrix crt-text"
                       : "text-ink/70 hover:bg-matrix/5 hover:text-matrix"
