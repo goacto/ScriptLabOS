@@ -1,8 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="ScriptLabOS">
-  <!-- Square icon. The GOACTO wordmark is unreadable at home-screen size, so this keeps only the gold slash. -->
-  <rect width="512" height="512" fill="#04070a"/>
-  <g transform="translate(256.0000 256.0000) scale(0.699856) translate(-786.0000 -318.0000)">
-    <path fill="#C9A227" fill-rule="evenodd" d="M628.25 594.80 C626.73 592.97 627.72 589.27 631.87 581.36 C639.78 566.26 666.52 511.77 673.26 497.00 C677.40 487.93 686.27 469.25 692.97 455.50 C699.67 441.75 706.29 427.80 707.68 424.50 C711.24 416.05 717.63 402.78 737.98 361.50 C747.75 341.70 756.43 323.93 757.28 322.00 C763.74 307.35 776.63 279.77 786.02 260.50 C796.43 239.15 799.67 232.10 806.94 215.00 C811.66 203.88 820.77 184.45 832.71 160.00 C839.03 147.07 846.00 132.45 848.20 127.50 C850.40 122.55 854.63 113.26 857.60 106.85 C860.57 100.45 863.00 94.88 863.00 94.49 C863.00 94.09 867.72 83.52 873.50 71.00 C879.27 58.48 884.00 47.68 884.00 47.02 C884.00 41.02 891.22 38.01 893.65 43.00 C894.32 44.38 897.88 52.02 901.55 60.00 C917.98 95.64 928.80 118.76 936.59 134.87 C946.69 155.75 946.78 156.49 940.62 168.77 C938.21 173.57 935.00 180.43 933.50 184.00 C932.00 187.57 928.52 195.22 925.78 201.00 C923.03 206.78 918.09 217.57 914.80 225.00 C904.92 247.31 894.04 270.86 888.48 282.00 C885.60 287.77 882.06 295.30 880.61 298.73 C879.17 302.15 873.46 314.22 867.93 325.55 C853.64 354.78 852.40 355.82 819.98 365.40 C799.03 371.60 798.74 372.33 797.07 424.20 C796.45 443.22 795.88 449.39 793.95 457.76 C790.59 472.39 786.46 471.03 836.37 471.73 C880.98 472.36 881.44 472.41 878.91 477.19 C875.20 484.19 835.70 521.07 815.50 536.38 C801.74 546.81 756.40 570.10 740.50 574.91 C736.65 576.08 731.25 577.89 728.50 578.94 C721.51 581.60 699.07 587.63 689.50 589.42 C671.74 592.73 668.02 593.26 656.50 594.06 C649.90 594.52 641.12 595.20 636.98 595.58 C631.00 596.11 629.21 595.96 628.25 594.80 Z"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="ScriptLabOS">
+  <!-- Approved R1 mark. Near-black green field (#0F1D18 to #030706), faint #19F59B grid, mint chevron and checklist. -->
+  <defs>
+    <linearGradient id="bg" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#0F1D18"/>
+      <stop offset="1" stop-color="#030706"/>
+    </linearGradient>
+    <filter id="gl" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <path d="M64 0V1024M0 64H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M128 0V1024M0 128H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M192 0V1024M0 192H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M256 0V1024M0 256H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M320 0V1024M0 320H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M384 0V1024M0 384H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M448 0V1024M0 448H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M512 0V1024M0 512H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M576 0V1024M0 576H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M640 0V1024M0 640H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M704 0V1024M0 704H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M768 0V1024M0 768H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M832 0V1024M0 832H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M896 0V1024M0 896H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M960 0V1024M0 960H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M165.8,687.3 L306.6,687.3 L481.8,512.0 L306.6,336.7 L165.8,336.7 L341.0,512.0Z" fill="#19F59B" fill-rule="evenodd"/>
+  <path d="M551.5,300.9 L551.5,723.1 L842.3,723.1 L842.3,300.9Z M563.5,534.2 L612.8,484.9 L661.8,533.9 L779.0,406.3 L830.4,453.5 L663.9,634.6Z" fill="#19F59B" fill-rule="evenodd"/>
 </svg>

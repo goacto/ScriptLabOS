@@ -27,11 +27,14 @@ export const metadata: Metadata = {
     "apple-mobile-web-app-capable": "yes",
   },
   icons: {
-    icon: PWA_ICONS.filter((icon) => icon.purpose === "any").map((icon) => ({
-      url: icon.src,
-      sizes: icon.sizes,
-      type: icon.type,
-    })),
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      ...PWA_ICONS.filter((icon) => icon.purpose === "any").map((icon) => ({
+        url: icon.src,
+        sizes: icon.sizes,
+        type: icon.type,
+      })),
+    ],
     apple: [
       {
         url: PWA_APPLE_TOUCH_ICON,
