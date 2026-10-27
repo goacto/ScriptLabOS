@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="ScriptLabOS">
+  <!-- Maskable R1. The chevron and card stay inside the center 80% safe circle.
+       The gradient and grid bleed to the canvas edge so platform masks never show a letterbox. -->
+  <defs>
+    <linearGradient id="bg" x1="0.2" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#0F1D18"/>
+      <stop offset="1" stop-color="#030706"/>
+    </linearGradient>
+    <filter id="gl" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <path d="M64 0V1024M0 64H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M128 0V1024M0 128H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M192 0V1024M0 192H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M256 0V1024M0 256H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M320 0V1024M0 320H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M384 0V1024M0 384H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M448 0V1024M0 448H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M512 0V1024M0 512H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M576 0V1024M0 576H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M640 0V1024M0 640H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M704 0V1024M0 704H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M768 0V1024M0 768H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M832 0V1024M0 832H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M896 0V1024M0 896H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M960 0V1024M0 960H1024" stroke="#19F59B" stroke-opacity="0.04" stroke-width="2"/>
+  <path d="M165.8,687.3 L306.6,687.3 L481.8,512.0 L306.6,336.7 L165.8,336.7 L341.0,512.0Z" fill="#19F59B" fill-rule="evenodd"/>
+  <path d="M551.5,300.9 L551.5,723.1 L842.3,723.1 L842.3,300.9Z M563.5,534.2 L612.8,484.9 L661.8,533.9 L779.0,406.3 L830.4,453.5 L663.9,634.6Z" fill="#19F59B" fill-rule="evenodd"/>
+</svg>

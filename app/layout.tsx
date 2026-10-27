@@ -6,26 +6,51 @@ import AchievementToasts from "@/components/AchievementToasts";
 import CommandPalette from "@/components/CommandPalette";
 import RunningTimerChip from "@/components/RunningTimerChip";
 import UsagePing from "@/components/UsagePing";
+import {
+  PWA_APPLE_TOUCH_ICON,
+  PWA_DESCRIPTION,
+  PWA_ICONS,
+  PWA_NAME,
+  PWA_THEME_COLOR,
+} from "@/lib/pwa";
 
 export const metadata: Metadata = {
+  applicationName: PWA_NAME,
   title: "ScriptLabOS by GOACTO",
-  description:
-    "You are the developer of your own life. Visualize and edit your daily scripts.",
+  description: PWA_DESCRIPTION,
   appleWebApp: {
     capable: true,
-    title: "ScriptLab",
+    title: PWA_NAME,
     statusBarStyle: "black-translucent",
   },
+  // Next's appleWebApp.capable emits mobile-web-app-capable. iOS still
+  // reads the apple-prefixed tag when launching from the home screen.
+  other: {
+    "apple-mobile-web-app-capable": "yes",
+  },
   icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
+    icon: [
+      { url: "/icons/icon.svg", type: "image/svg+xml" },
+      ...PWA_ICONS.filter((icon) => icon.purpose === "any").map((icon) => ({
+        url: icon.src,
+        sizes: icon.sizes,
+        type: icon.type,
+      })),
+    ],
+    apple: [
+      {
+        url: PWA_APPLE_TOUCH_ICON,
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#04070a",
+  themeColor: PWA_THEME_COLOR,
 };
 
 export default function RootLayout({
