@@ -6,6 +6,7 @@ import { uid, typeIcon } from "@/lib/gss";
 import { isOnLocalDay, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
 import { canShipDay } from "@/lib/reflection";
+import { workbookUrl } from "@/lib/workbookLink";
 import type { Executable, ExecutableSlot } from "@/lib/types";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i); // 05:00 – 22:00
@@ -29,6 +30,7 @@ export default function DayBuilder() {
   );
 
   const [showReview, setShowReview] = useState(false);
+  const [justShipped, setJustShipped] = useState(false);
   const [dailyReflection, setDailyReflection] = useState({
     wins: "",
     challenges: "",
@@ -215,6 +217,7 @@ export default function DayBuilder() {
     update(updatedExe);
     dispatch({ type: "passDay" });
     setShowReview(false);
+    setJustShipped(true);
     setDailyReflection({ wins: "", challenges: "", tomorrowFocus: "" });
   };
 
@@ -374,6 +377,22 @@ export default function DayBuilder() {
               This is what the day was made of.
             </div>
           </div>
+        </div>
+      )}
+
+      {justShipped && (
+        <div className="mb-4 panel p-3 text-sm text-muted" data-testid="post-reflection">
+          Day shipped. If paper helps, there&apos;s a{" "}
+          <a
+            data-testid="workbook-quiet-link"
+            href={workbookUrl()}
+            target="_blank"
+            rel="noopener"
+            className="underline text-ink/80"
+          >
+            30-Day Habit Builder Workbook ($7)
+          </a>
+          .
         </div>
       )}
 
