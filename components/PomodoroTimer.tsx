@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { pickOneTapScript, shouldAutoStart } from "@/lib/oneTap";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon, typeLabel } from "@/lib/gss";
 import { xpForRun } from "@/lib/gamification";
@@ -14,6 +15,9 @@ export default function PomodoroTimer() {
   const { ready, now, session, begin, pause, reset } = useTimer();
   const searchParams = useSearchParams();
   const queryId = searchParams.get("id");
+  const startParam = searchParams.get("start");
+  const router = useRouter();
+  const oneTapDone = useRef(false);
   const [scriptId, setScriptId] = useState<string | null>(queryId);
   const [showPomodoroInfo, setShowPomodoroInfo] = useState(false);
   const [checked, setChecked] = useState<Record<number, boolean>>({});
@@ -68,6 +72,23 @@ export default function PomodoroTimer() {
     }
     setScriptId(queryId);
   }, [queryId, ready, session]);
+
+  // One-tap run (Home Screen shortcut /tester?start=1[&id=]). Starts once,
+  // then drops start=1 from the URL so a reload never restarts it.
+  useEffect(() => {
+    if (!ready || oneTapDone.current || startParam !== "1") return;
+    oneTapDone.current = true;
+    const target =
+      (queryId && state.scripts.find((s) => s.id === queryId)) ||
+      pickOneTapScript(state.scripts);
+    if (target && shouldAutoStart(startParam, session)) {
+      setScriptId(target.id);
+      begin(target.id, target.durationMin * 60);
+    }
+    const keepId = target && shouldAutoStart(startParam, session) ? target.id : session?.scriptId ?? target?.id;
+    router.replace(keepId ? `/tester?id=${encodeURIComponent(keepId)}` : "/tester");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, startParam]);
 
   useEffect(() => {
     setChecked({});
