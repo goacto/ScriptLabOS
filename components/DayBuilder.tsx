@@ -363,7 +363,7 @@ export default function DayBuilder() {
                         type="button"
                         aria-pressed={on}
                         data-testid={`gg-${v}`}
-                        className={`btn text-sm ${on ? "btn-primary" : ""}`}
+                        className={`btn text-sm ${on ? "gg-on" : ""}`}
                         onClick={() =>
                           setDailyReflection((r) => ({ ...r, growGive: toggleGrowGive(r.growGive, v) }))
                         }
