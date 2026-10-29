@@ -6,6 +6,7 @@ import { uid, typeIcon } from "@/lib/gss";
 import { isOnLocalDay, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
 import { canShipDay } from "@/lib/reflection";
+import { moveSlot } from "@/lib/dayBuilder";
 import type { Executable, ExecutableSlot } from "@/lib/types";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i); // 05:00 – 22:00
@@ -36,6 +37,8 @@ export default function DayBuilder() {
   });
   const [drag, setDrag] = useState<PaletteItem | null>(null);
   const [picked, setPicked] = useState<PaletteItem | null>(null);
+  // Phone tap-to-move: index of a placed hour waiting for a new hour.
+  const [moveFrom, setMoveFrom] = useState<number | null>(null);
   const suppressClick = useRef(false);
 
   // Create lookup maps first
@@ -167,9 +170,25 @@ export default function DayBuilder() {
     update({ ...exe, slots: newSlots });
     setDrag(null);
     setPicked(null);
+    setMoveFrom(null);
+  };
+
+  const tapSlot = (i: number) => {
+    if (moveFrom !== null) {
+      update({ ...exe, slots: moveSlot(exe.slots, moveFrom, i) });
+      setMoveFrom(null);
+      return;
+    }
+    if (picked) placeItem(i, picked);
+  };
+
+  const cancelSelection = () => {
+    setPicked(null);
+    setMoveFrom(null);
   };
 
   const togglePick = (item: PaletteItem) => {
+    setMoveFrom(null);
     setPicked((current) =>
       current && current.kind === item.kind && current.id === item.id
         ? null
@@ -485,23 +504,21 @@ export default function DayBuilder() {
                   onDrop={() => {
                     if (drag) placeItem(i, drag);
                   }}
-                  onClick={() => {
-                    if (picked) placeItem(i, picked);
-                  }}
+                  onClick={() => tapSlot(i)}
                   onKeyDown={(e) => {
-                    if (!picked) return;
+                    if (!picked && moveFrom === null) return;
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      placeItem(i, picked);
+                      tapSlot(i);
                     }
                   }}
-                  tabIndex={picked ? 0 : undefined}
+                  tabIndex={picked || moveFrom !== null ? 0 : undefined}
                   aria-label={
                     pickedLabel ? `Add ${pickedLabel} at ${slot.time}` : undefined
                   }
                   className={`flex items-center gap-3 border-b border-matrix/10 py-2 min-h-11 ${
                     overlaps.has(i) ? "bg-amber-bug/10" : ""
-                  } ${drag || picked ? "hover:bg-matrix/10 cursor-pointer" : ""}`}
+                  } ${drag || picked || moveFrom !== null ? "hover:bg-matrix/10 cursor-pointer" : ""} ${moveFrom === i ? "outline outline-1 outline-matrix bg-matrix/10" : ""}`}
                 >
                   <span className="text-matrix-dim w-14 text-sm">
                     {slot.time}
@@ -517,6 +534,19 @@ export default function DayBuilder() {
                           ({script.durationMin}m)
                         </span>
                       </span>
+                      <button
+                        type="button"
+                        data-testid={`move-${slot.time}`}
+                        aria-pressed={moveFrom === i}
+                        className="btn !py-1 !px-3 text-xs min-h-11 md:hidden"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPicked(null);
+                          setMoveFrom((cur) => (cur === i ? null : i));
+                        }}
+                      >
+                        {moveFrom === i ? "moving" : "move"}
+                      </button>
                       <button
                         className="btn btn-danger !py-1 !px-3 text-xs min-h-11"
                         onClick={(e) => {
@@ -537,6 +567,19 @@ export default function DayBuilder() {
                         </span>
                       </span>
                       <button
+                        type="button"
+                        data-testid={`move-${slot.time}`}
+                        aria-pressed={moveFrom === i}
+                        className="btn !py-1 !px-3 text-xs min-h-11 md:hidden"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPicked(null);
+                          setMoveFrom((cur) => (cur === i ? null : i));
+                        }}
+                      >
+                        {moveFrom === i ? "moving" : "move"}
+                      </button>
+                      <button
                         className="btn btn-danger !py-1 !px-3 text-xs min-h-11"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -548,7 +591,9 @@ export default function DayBuilder() {
                     </>
                   ) : (
                     <span className="flex-1 text-xs text-muted italic">
-                      {pickedLabel
+                      {moveFrom !== null
+                        ? "— tap to move here —"
+                        : pickedLabel
                         ? `— tap to add ${pickedLabel} —`
                         : "— tap a script, then tap here — or drop one —"}
                     </span>
@@ -559,6 +604,21 @@ export default function DayBuilder() {
           </ul>
         </div>
       </div>
+      {(pickedLabel || moveFrom !== null) && (
+        <div
+          data-testid="tap-select-bar"
+          className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-matrix/40 bg-black/95 px-4 py-3 flex items-center gap-3 text-sm"
+        >
+          <span className="flex-1 text-matrix">
+            {moveFrom !== null
+              ? `Moving ${exe.slots[moveFrom]?.time}. Tap a new hour.`
+              : `Selected ${pickedLabel}. Tap an hour to add it.`}
+          </span>
+          <button type="button" className="btn !py-1 !px-3 text-xs min-h-11" onClick={cancelSelection}>
+            cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }
