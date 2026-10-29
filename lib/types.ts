@@ -60,7 +60,13 @@ export interface DailyReflection {
   wins: string;
   challenges: string;
   tomorrowFocus: string;
+  /** Matches Focus Log: Grow / Give selector, then details, then an open line. All optional. */
+  growGive?: GrowGive[];
+  details?: string;
+  anythingElse?: string;
 }
+
+export type GrowGive = "grow" | "give";
 
 export interface Executable {
   id: string;

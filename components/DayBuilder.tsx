@@ -5,7 +5,8 @@ import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { uid, typeIcon } from "@/lib/gss";
 import { isOnLocalDay, todayStr } from "@/lib/dates";
 import { xpForRun } from "@/lib/gamification";
-import { canShipDay } from "@/lib/reflection";
+import { canShipDay, toggleGrowGive } from "@/lib/reflection";
+import type { DailyReflection } from "@/lib/types";
 import type { Executable, ExecutableSlot } from "@/lib/types";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => 5 + i); // 05:00 – 22:00
@@ -29,7 +30,7 @@ export default function DayBuilder() {
   );
 
   const [showReview, setShowReview] = useState(false);
-  const [dailyReflection, setDailyReflection] = useState({
+  const [dailyReflection, setDailyReflection] = useState<DailyReflection>({
     wins: "",
     challenges: "",
     tomorrowFocus: "",
@@ -346,6 +347,47 @@ export default function DayBuilder() {
                   onChange={(e) =>
                     setDailyReflection((r) => ({ ...r, tomorrowFocus: e.target.value }))
                   }
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-6" data-testid="grow-give">
+              <div>
+                <div className="block text-sm text-ink/90 mb-1">Today was about (optional)</div>
+                <div className="flex gap-2" role="group" aria-label="Grow or Give">
+                  {(["grow", "give"] as const).map((v) => {
+                    const on = dailyReflection.growGive?.includes(v) ?? false;
+                    return (
+                      <button
+                        key={v}
+                        type="button"
+                        aria-pressed={on}
+                        data-testid={`gg-${v}`}
+                        className={`btn text-sm ${on ? "gg-on" : ""}`}
+                        onClick={() =>
+                          setDailyReflection((r) => ({ ...r, growGive: toggleGrowGive(r.growGive, v) }))
+                        }
+                      >
+                        {v === "grow" ? "🌱 Grow" : "🤝 Give"}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-ink/90 mb-1">Details (optional)</label>
+                <textarea
+                  rows={2}
+                  value={dailyReflection.details ?? ""}
+                  onChange={(e) => setDailyReflection((r) => ({ ...r, details: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-ink/90 mb-1">Anything else?</label>
+                <textarea
+                  rows={2}
+                  value={dailyReflection.anythingElse ?? ""}
+                  onChange={(e) => setDailyReflection((r) => ({ ...r, anythingElse: e.target.value }))}
                 />
               </div>
             </div>
