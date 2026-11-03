@@ -301,7 +301,7 @@ export default function SettingsPage() {
               <span>{state.xp}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted">Streak</span>
+              <span className="text-muted">Days showed up</span>
               <span>🔥 {state.streak} days</span>
             </div>
           </div>
