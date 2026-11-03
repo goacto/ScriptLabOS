@@ -57,7 +57,7 @@ export default function NavBar() {
             </span>
             <span className="text-[10px] sm:text-xs text-muted whitespace-nowrap">
               <span className="text-matrix">{current.name}</span>
-              <span className="hidden sm:inline"> · {state.xp} XP · 🔥 {state.streak}</span>
+              <span className="hidden sm:inline"> · {state.xp} XP · 🌱 {state.streak}</span>
             </span>
 
             {/* Mobile Hamburger */}
@@ -122,7 +122,7 @@ export default function NavBar() {
               <div className="px-4 py-3 text-xs text-muted border-b border-matrix/10">
                 <div>💡 Press ⌘K for quick navigation</div>
                 <div className="mt-1">
-                  {state.xp} XP · 🔥 {state.streak} {state.streak === 1 ? "day" : "days"} showed up
+                  {state.xp} XP · 🌱 {state.streak} {state.streak === 1 ? "day" : "days"} showed up
                 </div>
               </div>
             </nav>

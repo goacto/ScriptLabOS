@@ -105,7 +105,7 @@ describe("bumpStreak", () => {
     const next = bumpStreak(seeded);
     expect(next.streak).toBe(4);
   });
-  it("resets when there is a gap", () => {
+  it("keeps counting after a gap (no reset, no freeze)", () => {
     const gap = shiftDate(localToday(), -5);
     const seeded: ScriptLabState = {
       ...emptyState,
@@ -113,6 +113,6 @@ describe("bumpStreak", () => {
       lastPassedDate: gap,
     };
     const next = bumpStreak(seeded);
-    expect(next.streak).toBe(1);
+    expect(next.streak).toBe(13);
   });
 });

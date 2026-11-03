@@ -104,7 +104,7 @@ export default function BuildStatusHUD() {
           <div className="text-xs text-muted mb-1">level</div>
           <XPBar xp={state.xp} />
           <div className="mt-4 text-sm">
-            🔥 <span className="text-matrix">{state.streak}</span> {state.streak === 1 ? "day" : "days"} showed up
+            🌱 <span className="text-matrix">{state.streak}</span> {state.streak === 1 ? "day" : "days"} showed up
           </div>
         </div>
         <div className="panel p-5">

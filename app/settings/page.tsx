@@ -302,7 +302,7 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Days showed up</span>
-              <span>🔥 {state.streak} days</span>
+              <span>🌱 {state.streak}</span>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-matrix/10 text-center">

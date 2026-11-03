@@ -3,6 +3,7 @@ import { reducer } from "./reducer";
 import { emptyState } from "./storage";
 import { makeGss } from "./gss";
 import type { GssFile, Package, Profile, ScriptLabState } from "./types";
+import { shiftDate, todayStr } from "./dates";
 
 const baseline = (overrides: Partial<GssFile> = {}): GssFile =>
   makeGss({ title: "breath", type: "baseline", durationMin: 10, ...overrides });
@@ -92,11 +93,14 @@ describe("reducer: recordRun", () => {
 });
 
 describe("reducer: passDay", () => {
-  it("bumps streak and unlocks first-compile once (the executable itself is shipped by DayBuilder via upsertExecutable)", () => {
+  // Executable status is updated by DayBuilder (status: "complete") before passDay.
+  // passDay only records "days showed up" and achievements.
+  it("records a showed-up day and unlocks first-compile once (executable shipped by DayBuilder via upsertExecutable)", () => {
     const seeded: ScriptLabState = { ...emptyState, profile };
     const once = reducer(seeded, { type: "passDay" });
     expect(once.streak).toBe(1);
     expect(once.executables).toEqual([]);
+    expect(once.lastPassedDate).toBeTruthy();
     expect(once.achievements.find((a) => a.id === "first-compile")).toBeTruthy();
 
     const twice = reducer(once, { type: "passDay" });
@@ -105,6 +109,18 @@ describe("reducer: passDay", () => {
       (a) => a.id === "first-compile"
     ).length;
     expect(firstCompileCount).toBe(1);
+  });
+
+  it("adds another day after a gap instead of resetting", () => {
+    const gap = shiftDate(todayStr(), -5);
+    const seeded: ScriptLabState = {
+      ...emptyState,
+      profile,
+      streak: 4,
+      lastPassedDate: gap,
+    };
+    const next = reducer(seeded, { type: "passDay" });
+    expect(next.streak).toBe(5);
   });
 });
 
