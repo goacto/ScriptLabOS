@@ -49,15 +49,19 @@ Three companion files are living — every PR that changes behavior, visuals, or
 ### 3.1 Splash (`/`)
 - Matrix digital-rain canvas background
 - Centered GOACTO logo + "ScriptLabOS" wordmark, "Boot your OS" tagline
-- Auto-advance after ~2.5s (or on click) to `/onboard` (new user) or `/dashboard` (returning)
+- Footer line: "Growing Ourselves and Contributing To Others"
+- New user: the boot sequence lands on onboarding step 1. There is no separate `[ enter ]` tap.
+- Returning user: after the boot sequence, `[ enter ]` (or Enter / Space) opens Home (`/dashboard`)
 
 ### 3.2 Onboarding Installer Wizard (`/onboard`)
 Styled as an OS installer with steps and a progress bar ("Installing ScriptLabOS...").
-1. **Developer Profile** — display name
-2. **Wake-up Statements** — users can add *multiple* statements of the form *"I wake up to X so that Y so that Z"*. Three example statements are pre-seeded as inspiration and can be edited or removed.
-3. **Core Values** — pick/enter top 5
-4. **Goals** — enter 1–3 goals
-5. **Template Seeding** — user selects which curated templates to import as starting .gss files
+1. **Welcome** — leads with "Your day runs on habits. Write the ones you want, and run them each morning." The `[OS]` / `[UPD]` / `[BUG]` lines stay as code styling. **Skip setup, show me a sample day** loads every seed template, places a sample day on today's timeline, and opens Home.
+2. **Developer Profile** — display name
+3. **Wake-up Statement** — one optional field. Three examples are tap-to-pick and fill that field.
+4. **Core Values** — chips, pick 3, or "skip for now"
+5. **Goals** — enter 1–3 goals
+
+Script setup after that lives in Settings → **Set up my scripts** (add any seed templates that are not already in the library).
 
 ### 3.3 Dashboard / Build Status HUD (`/dashboard`)
 - "Today's Build" card (passing / failing / not started)

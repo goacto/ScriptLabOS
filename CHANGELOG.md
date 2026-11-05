@@ -10,6 +10,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ## [Unreleased]
 
+### Added
+- **Try it first.** Onboarding step 1 leads with "Your day runs on habits. Write the ones you want, and run them each morning." The code tags stay as styling. **Skip setup, show me a sample day** loads the seed templates, lays a sample day on today, and opens Home.
+- **Set up my scripts** in Settings adds any seed templates that are not already in the library.
+- Wake-up is one optional field with three tap-to-pick examples. Values are chips: pick 3, or skip for now.
+
+### Changed
+- A new user no longer taps `[ enter ]` on the splash. The boot sequence opens onboarding step 1. Returning users still tap `[ enter ]`.
+- The footer line reads "Growing Ourselves and Contributing To Others".
+
 ### Fixed
 - **Local calendar days.** Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the user's local date. They no longer flip to the next day in the evening (after 00:00 UTC).
 - **Import validation.** Invalid JSON and wrong-shaped files show the real error and leave current data alone. A backup import asks before it overwrites existing data.

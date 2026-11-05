@@ -25,8 +25,8 @@ npm run dev       # http://localhost:3000
 
 **What you'll see**
 
-1. `/` renders the splash: a Matrix digital-rain canvas behind a CRT boot log that auto-advances to `/onboard` (new user) or `/dashboard` (returning).
-2. Onboard: a 5-step installer wizard collects a name, one or more wake-up statements, values, goals, and seed templates.
+1. `/` renders the splash: a Matrix digital-rain canvas behind a CRT boot log. A new user lands on onboarding step 1 when the log finishes (no `[ enter ]` tap). A returning user still presses `[ enter ]` to open `/dashboard`.
+2. Onboard: welcome (plain lead, code styling, skip to a sample day), name, one optional wake-up, value chips, and goals. Seed templates are loaded by the skip path, or later from Settings → "Set up my scripts".
 3. After onboarding, your data lives in `localStorage` under key `scriptlab:v1`.
 
 **The four auth'd routes**

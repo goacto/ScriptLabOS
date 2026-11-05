@@ -4,6 +4,15 @@ All notable changes to **ScriptLabOS by GOACTO** are documented here.
 
 ---
 
+## First minute
+
+- Step 1 leads with a plain sentence and offers "Skip setup, show me a sample day". That loads starter scripts and a sample day, then opens Home.
+- Wake-up is one optional line. Tap one of three examples, or write your own.
+- Values are chips. Pick 3, or skip for now.
+- Settings has "Set up my scripts" for adding starter habits later.
+- The line under the splash and in Settings reads "Growing Ourselves and Contributing To Others".
+- A first visit no longer asks for a separate [ enter ] tap before setup.
+
 ## Fixes
 
 - Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the local calendar day instead of UTC.
