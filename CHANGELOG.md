@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [Unreleased]
 
 ### Fixed
+- **Workbook line after ship.** The quiet $7 workbook sentence on Day Builder stays for the rest of that local day, including after a refresh. It is still one plain link, shown only once the day is shipped.
 - **Local calendar days.** Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the user's local date. They no longer flip to the next day in the evening (after 00:00 UTC).
 - **Import validation.** Invalid JSON and wrong-shaped files show the real error and leave current data alone. A backup import asks before it overwrites existing data.
 - **Day Builder on touch.** Tap a script, then tap an hour to place it. Drag still works with a pointer.
@@ -19,6 +20,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - **Touch targets.** The mobile menu, library rows, and history filters are at least 44px tall.
 
 ### Added
+- **Yesterday's focus on the HUD.** When the previous local day has an optional tomorrow's focus, the dashboard build card shows that line. A blank focus stays hidden.
 - **Profile editor (`/profile`)** — edit developer name, wake-up statements (add / remove), core values, and goals after onboarding. Linked from the nav bar, the HUD's "wake-up statements" panel, and the command palette. Writes through the existing `setProfile` action; recommendations and the splash echo update on next render.
 - **Splash wake-up echo** — after the boot log finishes, the splash renders one of the user's wake-up statements in italic CRT text as a "why you booted" banner. Picked at random on each visit.
 - **Reducer extracted to `lib/reducer.ts`** — pure `reducer(state, action)` export with an exported `Action` union. `ScriptLabProvider` is now a thin shell around it.

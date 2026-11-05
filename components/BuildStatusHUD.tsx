@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import XPBar from "./XPBar";
 import { greetingFor, isOnLocalDay, todayStr } from "@/lib/dates";
+import { priorDayFocus } from "@/lib/reflection";
 
 export default function BuildStatusHUD() {
   const { state } = useScriptLab();
@@ -57,6 +58,7 @@ export default function BuildStatusHUD() {
       : "text-muted";
 
   const wakeUps = state.profile?.wakeUps ?? [];
+  const yesterdayFocus = priorDayFocus(state.executables, today);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -92,6 +94,12 @@ export default function BuildStatusHUD() {
           {status === "complete" && todaysExe?.reflection && (
             <div className="mt-3 text-xs text-matrix">
               ✓ Daily reflection logged
+            </div>
+          )}
+          {yesterdayFocus && (
+            <div className="mt-3 text-sm text-ink/90">
+              <div className="text-xs text-muted mb-1">yesterday&apos;s focus</div>
+              {yesterdayFocus}
             </div>
           )}
           <Link href="/day" className="btn btn-primary mt-4 w-full block text-center">
