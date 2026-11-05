@@ -11,6 +11,17 @@ import type {
 
 const KEY = "scriptlab:v1";
 
+/** Distinct complete-day dates, floored by stored streak so we never lose count. */
+export function daysShowedUpFromState(state: Partial<ScriptLabState>): number {
+  const dates = new Set<string>();
+  for (const exe of state.executables ?? []) {
+    if (exe.status === "complete" && exe.date) dates.add(exe.date);
+  }
+  if (state.lastPassedDate) dates.add(state.lastPassedDate);
+  const stored = typeof state.streak === "number" && state.streak > 0 ? state.streak : 0;
+  return Math.max(stored, dates.size);
+}
+
 export const emptyState: ScriptLabState = {
   profile: null,
   scripts: [],
@@ -381,7 +392,8 @@ export function loadState(): ScriptLabState {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return emptyState;
-    return migrateState(coerceLoadedState(JSON.parse(raw)));
+    const migrated = migrateState(coerceLoadedState(JSON.parse(raw)));
+    return { ...migrated, streak: daysShowedUpFromState(migrated) };
   } catch {
     return emptyState;
   }
@@ -403,7 +415,8 @@ export function importState(json: string): ScriptLabState {
       decision.cancelled ? "Import cancelled." : decision.error
     );
   }
-  return migrateState(decision.state);
+  const migrated = migrateState(decision.state);
+  return { ...migrated, streak: daysShowedUpFromState(migrated) };
 }
 
 export function resetState(): void {
@@ -430,11 +443,12 @@ function tagLegacyRun(script: GssFile, run: GssRun): GssRun {
 /** Additive, idempotent migration for any stored or imported state. */
 export function migrateState(raw: Partial<ScriptLabState>): ScriptLabState {
   const merged: ScriptLabState = { ...emptyState, ...raw };
-  return {
+  const withRuns: ScriptLabState = {
     ...merged,
     scripts: (merged.scripts ?? []).map((script) => ({
       ...script,
       runs: (script.runs ?? []).map((run) => tagLegacyRun(script, run)),
     })),
   };
+  return { ...withRuns, streak: daysShowedUpFromState(withRuns) };
 }
