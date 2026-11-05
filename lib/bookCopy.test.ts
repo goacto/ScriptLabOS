@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync } from "fs";
 import path from "path";
-import { canShipDay } from "./reflection";
+import { canShipDay, priorDayFocus } from "./reflection";
 
 const root = path.resolve(__dirname, "..");
 const uiFiles = ["components", "app"].flatMap((dir) =>
@@ -33,5 +33,26 @@ describe("book-aligned copy (Ch7 / Ch10)", () => {
   it("tomorrow's focus is optional when shipping a day", () => {
     expect(canShipDay({ wins: "breath at 6:10", challenges: "phone at lunch", tomorrowFocus: "" })).toBe(true);
     expect(canShipDay({ wins: "", challenges: "phone at lunch", tomorrowFocus: "x" })).toBe(false);
+  });
+
+  it("returns yesterday's focus and ignores a blank one", () => {
+    const executables = [
+      {
+        date: "2026-11-04",
+        reflection: { wins: "breath", challenges: "phone", tomorrowFocus: "  walk at lunch  " },
+      },
+      {
+        date: "2026-11-03",
+        reflection: { wins: "read", challenges: "none", tomorrowFocus: "older" },
+      },
+    ];
+    expect(priorDayFocus(executables, "2026-11-05")).toBe("walk at lunch");
+    expect(
+      priorDayFocus(
+        [{ date: "2026-11-04", reflection: { wins: "a", challenges: "b", tomorrowFocus: "   " } }],
+        "2026-11-05"
+      )
+    ).toBe("");
+    expect(priorDayFocus([], "2026-11-05")).toBe("");
   });
 });

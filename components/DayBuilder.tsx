@@ -30,7 +30,6 @@ export default function DayBuilder() {
   );
 
   const [showReview, setShowReview] = useState(false);
-  const [justShipped, setJustShipped] = useState(false);
   const [dailyReflection, setDailyReflection] = useState({
     wins: "",
     challenges: "",
@@ -217,7 +216,6 @@ export default function DayBuilder() {
     update(updatedExe);
     dispatch({ type: "passDay" });
     setShowReview(false);
-    setJustShipped(true);
     setDailyReflection({ wins: "", challenges: "", tomorrowFocus: "" });
   };
 
@@ -380,7 +378,7 @@ export default function DayBuilder() {
         </div>
       )}
 
-      {justShipped && (
+      {exe.status === "complete" && (
         <div className="mb-4 panel p-3 text-sm text-muted" data-testid="post-reflection">
           Day shipped. If paper helps, there&apos;s a{" "}
           <a

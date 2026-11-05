@@ -13,6 +13,8 @@ describe("quiet workbook link", () => {
   it("is a plain link, not a pop-up", () => {
     const src = readFileSync(path.resolve(__dirname, "../components/DayBuilder.tsx"), "utf8");
     expect(src).toContain('data-testid="workbook-quiet-link"');
+    expect(src).toContain('exe.status === "complete"');
+    expect(src).not.toContain("justShipped");
     expect(src).not.toMatch(/window\.open|alert\(|confirm\(/);
   });
 });
