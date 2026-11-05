@@ -28,13 +28,37 @@ describe("book modules skeleton", () => {
   });
   it("bad storage does not crash", () => {
     expect(loadAnswers({ getItem: () => "{oops" })).toEqual({});
+    expect(loadAnswers({ getItem: () => "null" })).toEqual({});
+    expect(loadAnswers({ getItem: () => "[]" })).toEqual({});
+    const s = mem();
+    s.setItem(BOOK_KEY, "1");
+    saveAnswer(s, "ch01-repo", "flinch.recent", "ok");
+    expect(loadAnswers(s)["ch01-repo"]["flinch.recent"]).toBe("ok");
   });
   it("book pages have no paywall, pricing or streak copy", () => {
     const root = path.resolve(__dirname, "..");
-    for (const f of ["app/book/page.tsx", "app/book/[id]/page.tsx", "lib/bookModules.ts"]) {
+    for (const f of [
+      "app/book/page.tsx",
+      "app/book/layout.tsx",
+      "app/book/[id]/page.tsx",
+      "app/book/[id]/layout.tsx",
+      "lib/bookModules.ts",
+    ]) {
       const src = readFileSync(path.join(root, f), "utf8").replace(/There is no paywall, tier check or upgrade prompt here\./, "");
       expect(src).not.toMatch(/\$\d|upgrade|paywall|\bpro\b|streak|unlock/i);
       expect(src).not.toMatch(/ & /);
+    }
+  });
+  it("book stays in the nav, the command palette, and on the pages", () => {
+    const root = path.resolve(__dirname, "..");
+    const nav = readFileSync(path.join(root, "components/NavBar.tsx"), "utf8");
+    const palette = readFileSync(path.join(root, "components/CommandPalette.tsx"), "utf8");
+    expect(nav).toContain('{ href: "/book", label: "Book" }');
+    expect(nav).toContain("showed up");
+    expect(nav).toContain("pathname.startsWith(`${href}/`)");
+    expect(palette).toContain('hint: "/book"');
+    for (const f of ["app/book/page.tsx", "app/book/[id]/page.tsx"]) {
+      expect(readFileSync(path.join(root, f), "utf8")).toContain("<NavBar />");
     }
   });
 });

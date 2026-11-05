@@ -76,10 +76,15 @@ export function isAvailable(m: BookModule): boolean {
   return m.steps.length > 0;
 }
 
+function isAnswerMap(value: unknown): value is BookAnswers {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
 /** Answers stay on this device (localStorage only). */
 export function loadAnswers(store: Pick<Storage, "getItem"> | undefined): BookAnswers {
   try {
-    return JSON.parse(store?.getItem(BOOK_KEY) ?? "{}") ?? {};
+    const parsed = JSON.parse(store?.getItem(BOOK_KEY) ?? "{}");
+    return isAnswerMap(parsed) ? parsed : {};
   } catch {
     return {};
   }

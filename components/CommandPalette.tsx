@@ -54,6 +54,7 @@ export default function CommandPalette() {
       { id: "go-tester", label: "Go to Script Tester", hint: "/tester", run: () => router.push("/tester") },
       { id: "go-analytics", label: "Go to Analytics", hint: "/analytics", run: () => router.push("/analytics") },
       { id: "go-history", label: "Go to History (commit log)", hint: "/history", run: () => router.push("/history") },
+      { id: "go-book", label: "Go to Book", hint: "/book", run: () => router.push("/book") },
       { id: "go-profile", label: "Edit profile (wake-ups, values, goals)", hint: "/profile", run: () => router.push("/profile") },
       { id: "go-settings", label: "Go to Settings", hint: "/settings", run: () => router.push("/settings") },
       { id: "new-baseline", label: "New baseline .gss", hint: "[OS]", run: () => newScript("baseline") },
