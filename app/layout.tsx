@@ -8,16 +8,34 @@ import RunningTimerChip from "@/components/RunningTimerChip";
 import UsagePing from "@/components/UsagePing";
 import {
   PWA_APPLE_TOUCH_ICON,
-  PWA_DESCRIPTION,
   PWA_ICONS,
   PWA_NAME,
-  PWA_THEME_COLOR,
 } from "@/lib/pwa";
+
+const SEO_DESCRIPTION =
+  "ScriptLabOS by Team GOACTO. You are the developer of your own life. Visualize and edit your daily scripts. Growing Ourselves and Contributing To Others.";
 
 export const metadata: Metadata = {
   applicationName: PWA_NAME,
-  title: "ScriptLabOS by GOACTO",
-  description: PWA_DESCRIPTION,
+  title: {
+    default: "ScriptLabOS by Team GOACTO",
+    template: "%s · ScriptLabOS",
+  },
+  description: SEO_DESCRIPTION,
+  metadataBase: new URL("https://scriptlabos.goacto.com"),
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "https://scriptlabos.goacto.com/",
+    title: "ScriptLabOS by Team GOACTO",
+    description: SEO_DESCRIPTION,
+    siteName: "Team GOACTO",
+  },
+  twitter: {
+    card: "summary",
+    title: "ScriptLabOS by Team GOACTO",
+    description: SEO_DESCRIPTION,
+  },
   appleWebApp: {
     capable: true,
     title: PWA_NAME,
@@ -50,7 +68,8 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: PWA_THEME_COLOR,
+  // Brand amber for browser chrome (audit #13); PWA splash still uses lib/pwa.
+  themeColor: "#E8A33D",
 };
 
 export default function RootLayout({

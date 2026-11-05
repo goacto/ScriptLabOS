@@ -92,7 +92,7 @@ export function maybeUnlockAchievements(
       unlocked.push({
         id: "streak-7",
         title: "Seven-Day Build",
-        description: "7-day streak of passing builds.",
+        description: "Showed up with a passing build on 7 days.",
         unlockedAt: now,
       });
     }

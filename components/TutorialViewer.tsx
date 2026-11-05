@@ -30,7 +30,7 @@ const TUTORIALS = [
             "Plan: Design your day in Day Builder",
             "Execute: Run scripts with Pomodoro Timer + reflection",
             "Review: End-of-day retrospective",
-            "Ship: Lock in XP, streak, and patterns",
+            "Ship: Lock in XP, days you showed up, and patterns",
           ],
         },
       ],
@@ -103,7 +103,7 @@ const TUTORIALS = [
           bullets: [
             "Required to ship your day",
             "Write what ran and what ran instead; tomorrow's focus is optional",
-            "Locks in XP and streak",
+            "Locks in XP and days you showed up",
             "Helps you iterate and improve",
           ],
         },
@@ -224,7 +224,7 @@ const TUTORIALS = [
           ],
         },
         {
-          heading: "Streaks",
+          heading: "Showing up",
           text: "Consecutive days with at least one completed build. Maintains momentum and builds consistency.",
         },
         {
@@ -232,7 +232,7 @@ const TUTORIALS = [
           bullets: [
             "Unlock achievements for milestones",
             "First run, first build, first bug session",
-            "7-day streak, 30-day streak",
+            "Showed up 7 days, showed up 30 days",
             "Achievements shown on dashboard and profile",
           ],
         },
@@ -268,7 +268,7 @@ const TUTORIALS = [
           bullets: [
             "Required to ship your daily build",
             "What ran, what ran instead, optional focus for tomorrow",
-            "Locks in your streak and XP",
+            "Locks in days you showed up, and XP",
             "Creates a changelog of your growth",
           ],
         },

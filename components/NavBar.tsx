@@ -122,7 +122,7 @@ export default function NavBar() {
               <div className="px-4 py-3 text-xs text-muted border-b border-matrix/10">
                 <div>💡 Press ⌘K for quick navigation</div>
                 <div className="mt-1">
-                  {state.xp} XP · 🔥 {state.streak} day streak
+                  {state.xp} XP · 🔥 {state.streak} {state.streak === 1 ? "day" : "days"} showed up
                 </div>
               </div>
             </nav>
