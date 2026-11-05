@@ -1,5 +1,5 @@
 import type { Achievement, GssFile, ScriptLabState } from "./types";
-import { shiftDate, todayStr } from "./dates";
+import { todayStr } from "./dates";
 
 export { todayStr };
 
@@ -88,11 +88,12 @@ export function maybeUnlockAchievements(
         unlockedAt: now,
       });
     }
-    if (state.streak + 1 >= 7 && !has("streak-7")) {
+    // Called after recordShowedUp; streak is already the total days count.
+    if (state.streak >= 7 && !has("streak-7")) {
       unlocked.push({
         id: "streak-7",
-        title: "Seven-Day Build",
-        description: "7-day streak of passing builds.",
+        title: "Seven Days Showed Up",
+        description: "Showed up with a passing build on 7 days in total — not in a row.",
         unlockedAt: now,
       });
     }
@@ -101,13 +102,29 @@ export function maybeUnlockAchievements(
   return unlocked;
 }
 
-export function bumpStreak(
+/**
+ * Record another day the user showed up. Counts total distinct days, never
+ * resets for a gap (no streak-freeze / no penalty). The `streak` field is kept
+ * for storage compatibility and now means "days showed up".
+ * Uses local calendar dates (lib/dates) — never UTC ISO slice.
+ */
+export function recordShowedUp(
   state: ScriptLabState,
   now: Date = new Date()
 ): ScriptLabState {
   const today = todayStr(now);
   if (state.lastPassedDate === today) return state;
-  const yesterday = shiftDate(today, -1);
-  const nextStreak = state.lastPassedDate === yesterday ? state.streak + 1 : 1;
-  return { ...state, streak: nextStreak, lastPassedDate: today };
+  return {
+    ...state,
+    streak: Math.max(0, state.streak) + 1,
+    lastPassedDate: today,
+  };
+}
+
+/** @deprecated Prefer recordShowedUp. Kept as alias for older call sites. */
+export function bumpStreak(
+  state: ScriptLabState,
+  now: Date = new Date()
+): ScriptLabState {
+  return recordShowedUp(state, now);
 }
