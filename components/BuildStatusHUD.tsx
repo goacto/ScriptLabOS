@@ -64,7 +64,7 @@ export default function BuildStatusHUD() {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-6">
       <div>
         <div className="text-xs text-muted uppercase tracking-[0.4em]">
-          {greetingFor()}, {state.profile?.name ?? "developer"}.
+          {greetingFor()}, {state.profile?.name?.trim() || "developer"}.
         </div>
         <h1 className="text-3xl text-matrix crt-text font-bold">
           /dev/self · build status

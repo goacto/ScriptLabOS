@@ -124,6 +124,37 @@ describe("reducer: passDay", () => {
   });
 });
 
+describe("reducer: sample day", () => {
+  it("loads the seed scripts and today's sample day, and does not clobber a profile", () => {
+    const scripts = [baseline({ title: "Morning Breathwork" })];
+    const executable = {
+      id: "day-1",
+      date: "2026-11-05",
+      slots: [{ time: "07:00", scriptId: scripts[0].id }],
+      status: "draft" as const,
+    };
+    const next = reducer(emptyState, {
+      type: "startSampleDay",
+      profile: { ...profile, name: "" },
+      scripts,
+      executable,
+    });
+    expect(next.profile?.name).toBe("");
+    expect(next.scripts.map((script) => script.title)).toEqual([
+      "Morning Breathwork",
+    ]);
+    expect(next.executables).toEqual([executable]);
+
+    const again = reducer(next, {
+      type: "startSampleDay",
+      profile: { ...profile, name: "other" },
+      scripts: [baseline({ title: "Deep Read" })],
+      executable: { ...executable, id: "day-2" },
+    });
+    expect(again).toBe(next);
+  });
+});
+
 describe("reducer: reset + importAll", () => {
   it("reset returns emptyState", () => {
     const seeded = reducer(emptyState, {

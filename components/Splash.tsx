@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MatrixRain from "./MatrixRain";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
+import { GOACTO_LINE } from "@/lib/onboarding";
 
 const BOOT_LINES = [
   "> boot: scriptlabos.v0.1",
@@ -42,9 +43,15 @@ export default function Splash() {
     return () => clearInterval(i);
   }, []);
 
+  const returning = hydrated && Boolean(state.profile);
+
   useEffect(() => {
     if (!done || !hydrated) return;
-    const advance = () => router.push(state.profile ? "/dashboard" : "/onboard");
+    if (!state.profile) {
+      router.replace("/onboard");
+      return;
+    }
+    const advance = () => router.push("/dashboard");
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
@@ -56,11 +63,11 @@ export default function Splash() {
   }, [done, hydrated, state.profile, router]);
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-bg">
+    <div className="relative w-full min-h-screen overflow-x-hidden overflow-y-auto bg-bg">
       <MatrixRain opacity={0.55} />
       <div className="absolute inset-0 bg-gradient-to-b from-bg/30 via-bg/60 to-bg" />
-      <div className="relative z-10 flex flex-col items-center justify-center w-full h-full text-center px-6">
-        <div className="crt-text mb-8 animate-flicker">
+      <div className="relative z-10 flex flex-col items-center justify-center w-full min-h-screen text-center px-4 py-6">
+        <div className="crt-text mb-4 animate-flicker">
           <div className="text-matrix text-5xl md:text-7xl font-bold tracking-tight">
             &lt;/&gt; ScriptLabOS
           </div>
@@ -68,7 +75,7 @@ export default function Splash() {
             B Y &nbsp; G O A C T O
           </div>
         </div>
-        <div className="text-ink/90 max-w-lg mb-10 text-sm md:text-base leading-relaxed space-y-3">
+        <div className="text-ink/90 max-w-lg mb-6 text-sm md:text-base leading-relaxed space-y-3">
           <p>Our lives are the result of the scripts we allow ourselves to run.</p>
           <p className="text-matrix font-semibold">We are the developers of our life.</p>
           <p className="text-ink/70 text-sm">Boot the OS.</p>
@@ -93,38 +100,34 @@ export default function Splash() {
             </div>
           </div>
         )}
-        {done && (
+        {done && returning && (
           <div className="mt-8 flex flex-col items-center gap-2">
             <button
               autoFocus
-              className="btn btn-primary"
-              onClick={() =>
-                router.push(state.profile ? "/dashboard" : "/onboard")
-              }
+              className="btn btn-primary min-h-11"
+              onClick={() => router.push("/dashboard")}
             >
               [ enter ]
             </button>
             <div className="text-[10px] text-muted tracking-[0.3em]">
               press enter or space
             </div>
-            <div className="mt-8 text-center">
-              <div className="text-xs text-ink/60 leading-relaxed">
-                We are
-              </div>
-              <div className="text-sm text-matrix-dim font-semibold tracking-wide">
-                Growing Ourselves And Contributing To Others
-              </div>
-              <a
-                href="https://GOACTO.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-matrix hover:text-matrix-dim transition-colors mt-1 inline-block"
-              >
-                Learn more at GOACTO.com
-              </a>
-            </div>
           </div>
         )}
+        <div className="mt-8 text-center">
+          <div className="text-xs text-ink/60 leading-relaxed">We are</div>
+          <div className="text-sm text-matrix-dim font-semibold tracking-wide">
+            {GOACTO_LINE}
+          </div>
+          <a
+            href="https://GOACTO.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-matrix hover:text-matrix-dim transition-colors mt-1 inline-block"
+          >
+            Learn more at GOACTO.com
+          </a>
+        </div>
       </div>
     </div>
   );
