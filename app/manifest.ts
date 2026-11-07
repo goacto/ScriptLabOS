@@ -6,6 +6,7 @@ import {
   PWA_NAME,
   PWA_THEME_COLOR,
 } from "@/lib/pwa";
+import { ONE_TAP_RUN_URL } from "@/lib/oneTap";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -20,5 +21,14 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: PWA_THEME_COLOR,
     lang: "en",
     icons: PWA_ICONS,
+    shortcuts: [
+      {
+        name: "Start a 25-min run",
+        short_name: "Run 25 min",
+        description: "Open the Tester and start a 25-minute session right away.",
+        url: ONE_TAP_RUN_URL,
+        icons: [{ src: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+      },
+    ],
   };
 }
