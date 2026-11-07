@@ -14,9 +14,15 @@ const NAV = [
   { href: "/tester", label: "Tester" },
   { href: "/analytics", label: "Analytics" },
   { href: "/history", label: "History" },
+  { href: "/book", label: "Book" },
   { href: "/profile", label: "Profile" },
   { href: "/settings", label: "Settings" },
 ];
+
+function isNavActive(pathname: string | null, href: string) {
+  if (!pathname) return false;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function NavBar() {
   const { state } = useScriptLab();
@@ -35,13 +41,13 @@ export default function NavBar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex gap-1 flex-shrink">
+          <nav className="hidden lg:flex gap-0.5 flex-shrink min-w-0">
             {NAV.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
-                className={`px-2 lg:px-3 py-1 rounded whitespace-nowrap text-xs lg:text-sm ${
-                  pathname === n.href
+                className={`px-1 xl:px-1.5 py-1 rounded whitespace-nowrap text-xs ${
+                  isNavActive(pathname, n.href)
                     ? "bg-matrix/15 text-matrix crt-text"
                     : "text-ink/70 hover:text-matrix"
                 }`}
@@ -111,7 +117,7 @@ export default function NavBar() {
                   href={n.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={`px-4 py-3 min-h-11 text-sm border-b border-matrix/10 ${
-                    pathname === n.href
+                    isNavActive(pathname, n.href)
                       ? "bg-matrix/15 text-matrix crt-text"
                       : "text-ink/70 hover:bg-matrix/5 hover:text-matrix"
                   }`}
