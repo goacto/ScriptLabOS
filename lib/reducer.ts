@@ -39,7 +39,13 @@ export type Action =
   | { type: "logRelapse"; scriptId: string }
   | { type: "passDay" }
   | { type: "reset" }
-  | { type: "importAll"; state: ScriptLabState };
+  | { type: "importAll"; state: ScriptLabState }
+  | {
+      type: "startSampleDay";
+      profile: Profile;
+      scripts: GssFile[];
+      executable: Executable;
+    };
 
 export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
   switch (action.type) {
@@ -52,6 +58,25 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
     }
     case "setProfile":
       return { ...state, profile: action.profile };
+    case "startSampleDay": {
+      if (state.profile) return state;
+      const owned = new Set(state.scripts.map((script) => script.title));
+      const scripts = [
+        ...state.scripts,
+        ...action.scripts.filter((script) => !owned.has(script.title)),
+      ];
+      const hasDay = state.executables.some(
+        (exe) => exe.date === action.executable.date
+      );
+      return {
+        ...state,
+        profile: action.profile,
+        scripts,
+        executables: hasDay
+          ? state.executables
+          : [...state.executables, action.executable],
+      };
+    }
     case "addScript":
       return { ...state, scripts: [...state.scripts, action.script] };
     case "updateScript":

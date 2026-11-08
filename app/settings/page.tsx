@@ -9,6 +9,8 @@ import { exportState, resetState, resolveImport } from "@/lib/storage";
 import MarkdownViewer from "@/components/MarkdownViewer";
 import TutorialViewer from "@/components/TutorialViewer";
 import UsageToggle from "@/components/UsageToggle";
+import SetupScripts from "@/components/SetupScripts";
+import { GOACTO_LINE } from "@/lib/onboarding";
 
 type DocType = "changelog" | "backlog" | "engineering" | null;
 
@@ -114,6 +116,8 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-4">
+        <SetupScripts />
+
         {/* Appearance */}
         <div className="panel p-6">
           <h2 className="text-lg text-matrix font-bold mb-1">Appearance</h2>
@@ -286,7 +290,7 @@ export default function SettingsPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Profile</span>
-              <span>{state.profile.name}</span>
+              <span>{state.profile.name.trim() || "not set yet"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted">Scripts</span>
@@ -312,7 +316,7 @@ export default function SettingsPage() {
               rel="noopener noreferrer"
               className="text-sm text-matrix-dim hover:text-matrix transition-colors"
             >
-              Growing Ourselves And Contributing To Others
+              {GOACTO_LINE}
             </a>
           </div>
         </div>
