@@ -11,6 +11,7 @@ All notable changes to **ScriptLabOS by GOACTO** are documented here.
 - Values are chips. Pick 3, or skip for now.
 - Settings has "Set up my scripts" for adding starter habits later.
 - The line under the splash and in Settings reads "Growing Ourselves and Contributing To Others".
+- The splash, setup footer, and Settings about link Focus Log (the main focus app) and Mindscape (a focus game), plus a free one-page book guide.
 - A first visit no longer asks for a separate [ enter ] tap before setup.
 
 ## Fixes

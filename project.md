@@ -50,6 +50,8 @@ Three companion files are living — every PR that changes behavior, visuals, or
 - Matrix digital-rain canvas background
 - Centered GOACTO logo + "ScriptLabOS" wordmark, "Boot your OS" tagline
 - Footer line: "Growing Ourselves and Contributing To Others"
+- One line on how ScriptLabOS differs, with Focus Log (https://focus.goacto.com) first and labeled the main focus app, and Mindscape (https://mindscape.goacto.com) as a focus game
+- Footer link: "Free one-page book guide" → https://goacto.com/pages/atomic-habits
 - New user: the boot sequence lands on onboarding step 1. There is no separate `[ enter ]` tap.
 - Returning user: after the boot sequence, `[ enter ]` (or Enter / Space) opens Home (`/dashboard`)
 

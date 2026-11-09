@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import MatrixRain from "./MatrixRain";
+import EcosystemFooter from "./EcosystemFooter";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { GOACTO_LINE } from "@/lib/onboarding";
 
@@ -127,6 +128,7 @@ export default function Splash() {
           >
             Learn more at GOACTO.com
           </a>
+          <EcosystemFooter />
         </div>
       </div>
     </div>

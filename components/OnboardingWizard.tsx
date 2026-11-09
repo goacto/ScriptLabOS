@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
+import EcosystemFooter from "@/components/EcosystemFooter";
 import { uid } from "@/lib/gss";
 import { todayStr } from "@/lib/dates";
 import {
@@ -278,6 +279,7 @@ export default function OnboardingWizard() {
           <div className="text-sm text-matrix-dim font-semibold tracking-wide">
             {GOACTO_LINE}
           </div>
+          <EcosystemFooter />
         </footer>
       </div>
     </div>
