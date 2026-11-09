@@ -29,7 +29,7 @@ describe("Focus Log and free book guide links", () => {
 
   it("fails if the Focus Log link or the free-guide link disappears", () => {
     expect(footer).toContain("https://focus.goacto.com");
-    expect(footer).toContain("https://goacto.com/pages/atomic-habits");
+    expect(footer).toContain("https://goacto.com/pages/free-book-guide");
     expect(footer).toContain("Free one-page book guide");
     expect(footer).toContain(
       "ScriptLabOS: build habits as code in a terminal-style OS."
