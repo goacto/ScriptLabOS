@@ -11,6 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 ## [Unreleased]
 
 ### Added
+- **Another way to focus.** The splash, the onboarding footer, and Settings → About say how ScriptLabOS differs: habits as code in a terminal-style OS. Focus Log (https://focus.goacto.com) is first and labeled the main focus app. Mindscape (https://mindscape.goacto.com) is one line as a focus game. The footer link **Free one-page book guide** opens https://goacto.com/pages/atomic-habits. The in-app workbook link is unchanged.
 - **Try it first.** Onboarding step 1 leads with "Your day runs on habits. Write the ones you want, and run them each morning." The code tags stay as styling. **Skip setup, show me a sample day** loads the seed templates, lays a sample day on today, and opens Home.
 - **Set up my scripts** in Settings adds any seed templates that are not already in the library.
 - Wake-up is one optional field with three tap-to-pick examples. Values are chips: pick 3, or skip for now.

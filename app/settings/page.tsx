@@ -11,6 +11,7 @@ import TutorialViewer from "@/components/TutorialViewer";
 import UsageToggle from "@/components/UsageToggle";
 import SetupScripts from "@/components/SetupScripts";
 import { GOACTO_LINE } from "@/lib/onboarding";
+import EcosystemFooter from "@/components/EcosystemFooter";
 
 type DocType = "changelog" | "backlog" | "engineering" | null;
 
@@ -318,6 +319,7 @@ export default function SettingsPage() {
             >
               {GOACTO_LINE}
             </a>
+            <EcosystemFooter />
           </div>
         </div>
       </div>
