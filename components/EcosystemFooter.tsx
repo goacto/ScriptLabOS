@@ -38,7 +38,7 @@ export default function EcosystemFooter() {
       </p>
       <p>
         <a
-          href="https://goacto.com/pages/atomic-habits"
+          href="https://goacto.com/pages/free-book-guide"
           data-testid="free-book-guide"
           className={linkClass}
           {...outbound}
