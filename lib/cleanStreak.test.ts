@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { cleanStreakFor, CLEAN_STREAK_DAYS_TO_ELIMINATE } from "./cleanStreak";
+import {
+  cleanStreakFor,
+  CLEAN_STREAK_DAYS_TO_ELIMINATE,
+  relapseWhenLabel,
+} from "./cleanStreak";
 import { makeGss } from "./gss";
 import type { GssRun } from "./types";
 
@@ -32,6 +36,14 @@ describe("cleanStreakFor (c)", () => {
     const at21 = cleanStreakFor(bugCreated(60, [relapse(daysAgo(CLEAN_STREAK_DAYS_TO_ELIMINATE))]), now);
     expect(at20.isEliminated).toBe(false);
     expect(at21.isEliminated).toBe(true);
+  });
+
+  it("labels a relapse by the local calendar day, not a 24-hour bucket", () => {
+    const morning = new Date("2026-10-13T14:00:00.000Z");
+    const lastNight = "2026-10-13T01:30:00.000Z";
+    expect(relapseWhenLabel(lastNight, morning)).toBe("yesterday");
+    expect(relapseWhenLabel("2026-10-13T13:00:00.000Z", morning)).toBe("today");
+    expect(relapseWhenLabel(daysAgo(3), now)).toBe("older");
   });
 
   it("ignores session runs when anchoring the streak", () => {

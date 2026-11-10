@@ -20,12 +20,16 @@ export default function ScriptEditor({
   onDuplicate: (id: string) => void;
 }) {
   const [draft, setDraft] = useState<GssFile>(script);
+  const [tagsText, setTagsText] = useState(script.tags.join(", "));
 
   useEffect(() => {
     setDraft(script);
+    setTagsText(script.tags.join(", "));
   }, [script.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const dirty = JSON.stringify(draft) !== JSON.stringify(script);
+  const dirty =
+    JSON.stringify({ ...draft, tags: tagsText }) !==
+    JSON.stringify({ ...script, tags: script.tags.join(", ") });
 
   const setField = <K extends keyof GssFile>(k: K, v: GssFile[K]) =>
     setDraft((d) => ({ ...d, [k]: v }));
@@ -59,9 +63,24 @@ export default function ScriptEditor({
           <button
             className="btn btn-primary text-xs min-h-11"
             disabled={!dirty}
-            onClick={() =>
-              onSave({ ...draft, updatedAt: new Date().toISOString() })
-            }
+            onClick={() => {
+              const tags = tagsText
+                .split(",")
+                .map((tag) => tag.trim())
+                .filter(Boolean);
+              const steps = draft.steps.filter(
+                (step, index, all) =>
+                  step.trim() !== "" || index < all.length - 1
+              );
+              setTagsText(tags.join(", "));
+              setDraft((current) => ({ ...current, tags, steps }));
+              onSave({
+                ...draft,
+                tags,
+                steps,
+                updatedAt: new Date().toISOString(),
+              });
+            }}
           >
             {dirty ? "save *" : "saved"}
           </button>
@@ -140,16 +159,8 @@ export default function ScriptEditor({
           </label>
           <input
             className="min-w-0"
-            value={draft.tags.join(", ")}
-            onChange={(e) =>
-              setField(
-                "tags",
-                e.target.value
-                  .split(",")
-                  .map((x) => x.trim())
-                  .filter(Boolean)
-              )
-            }
+            value={tagsText}
+            onChange={(e) => setTagsText(e.target.value)}
           />
         </div>
         <div className="min-w-0">

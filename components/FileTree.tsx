@@ -24,7 +24,10 @@ export default function FileTree({
     virus: [],
     package: [],
   };
-  scripts.forEach((s) => grouped[s.type].push(s));
+  scripts.forEach((s) => {
+    const bucket = grouped[s.type];
+    if (bucket) bucket.push(s);
+  });
 
   return (
     <div className="panel p-3 h-full overflow-y-auto text-sm">

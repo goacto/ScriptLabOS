@@ -1,5 +1,6 @@
 import type {
   Executable,
+  ExecutableSlot,
   GssFile,
   Package,
   Profile,
@@ -46,6 +47,25 @@ export type Action =
       scripts: GssFile[];
       executable: Executable;
     };
+
+function clearSlotRef(
+  executables: Executable[],
+  key: "scriptId" | "packageId",
+  id: string
+): Executable[] {
+  return executables.map((exe) => {
+    if (!exe.slots.some((slot) => slot[key] === id)) return exe;
+    return {
+      ...exe,
+      slots: exe.slots.map((slot) => {
+        if (slot[key] !== id) return slot;
+        const next: ExecutableSlot = { ...slot };
+        delete next[key];
+        return next;
+      }),
+    };
+  });
+}
 
 export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
   switch (action.type) {
@@ -94,6 +114,7 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
           ...p,
           scriptIds: p.scriptIds.filter((id) => id !== action.id),
         })),
+        executables: clearSlotRef(state.executables, "scriptId", action.id),
       };
     case "addPackage":
       return { ...state, packages: [...state.packages, action.pkg] };
@@ -108,6 +129,7 @@ export function reducer(state: ScriptLabState, action: Action): ScriptLabState {
       return {
         ...state,
         packages: state.packages.filter((p) => p.id !== action.id),
+        executables: clearSlotRef(state.executables, "packageId", action.id),
       };
     case "upsertExecutable": {
       const exists = state.executables.some((e) => e.id === action.exe.id);

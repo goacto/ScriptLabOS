@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import { cleanStreakFor } from "@/lib/cleanStreak";
+import { cleanStreakFor, relapseWhenLabel } from "@/lib/cleanStreak";
 
 export default function QuickLogWidget() {
   const { state, dispatch } = useScriptLab();
@@ -53,6 +53,7 @@ export default function QuickLogWidget() {
               const isBug = script.type === "bug";
               const icon = isBug ? "🐛" : "🦠";
               const color = isBug ? "text-amber-bug" : "text-virus";
+              const when = lastRun ? relapseWhenLabel(lastRun) : null;
 
               return (
                 <div
@@ -69,9 +70,10 @@ export default function QuickLogWidget() {
                     <div className="text-xs text-muted">
                       {lastRun ? (
                         <>
-                          {daysClean === 0 && "Last: today"}
-                          {daysClean === 1 && "Last: yesterday"}
-                          {daysClean > 1 && `${daysClean} days clean`}
+                          {when === "today" && "Last: today"}
+                          {when === "yesterday" && "Last: yesterday"}
+                          {when === "older" &&
+                            `${daysClean} day${daysClean === 1 ? "" : "s"} clean`}
                           {daysClean >= 7 && daysClean < 21 && (
                             <span className="text-matrix ml-2">
                               {21 - daysClean} days until it moves to Archived

@@ -1,9 +1,24 @@
+import { calendarDaysBetween, instantToLocalDate, todayStr } from "./dates";
 import type { GssFile, GssRun } from "./types";
 
 export const CLEAN_STREAK_DAYS_TO_ELIMINATE = 21;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const isRelapse = (run: GssRun) => run.kind === "relapse";
+
+/** Calendar words for a logged relapse. "today" / "yesterday" follow the local date, not a 24h bucket. */
+export function relapseWhenLabel(
+  lastRelapseAt: string,
+  now: Date = new Date()
+): "today" | "yesterday" | "older" {
+  const gap = calendarDaysBetween(
+    instantToLocalDate(lastRelapseAt),
+    todayStr(now)
+  );
+  if (gap <= 0) return "today";
+  if (gap === 1) return "yesterday";
+  return "older";
+}
 
 export interface CleanStreak {
   relapseCount: number;

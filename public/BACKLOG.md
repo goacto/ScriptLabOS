@@ -37,7 +37,10 @@ Living list of everything we've deferred or haven't started yet. Ordered loosely
 
 ## Known bugs
 
-- [ ] _(none filed — please log here with a short repro and the route/file involved)_
+- [ ] **Light mode is hard to read.** Tailwind color tokens (`text-ink`, `bg-bg`) are fixed dark-theme hex values, so light text sits on light panels. `app/globals.css` switches CSS variables; `tailwind.config.ts` does not.
+- [ ] **In-app docs are a second copy.** Settings fetches `public/CHANGELOG.md`, `public/BACKLOG.md`, and `public/ENGINEERING_GUIDE.md`, which have drifted from the root living docs (shipped work still listed as "Coming Soon").
+- [ ] **JetBrains Mono is named but never loaded.** `app/globals.css` asks for it; no `next/font` or stylesheet link exists, so the UI uses the monospace fallback.
+- [ ] **`npm run lint` has no ESLint config or dependency**, so the script cannot run a project lint.
 
 ## Research / spikes
 

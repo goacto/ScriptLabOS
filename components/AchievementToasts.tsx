@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { partitionAchievements } from "@/lib/achievements";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import type { Achievement } from "@/lib/types";
 
@@ -9,31 +10,29 @@ interface ShownToast extends Achievement {
 }
 
 export default function AchievementToasts() {
-  const { state } = useScriptLab();
+  const { state, hydrated } = useScriptLab();
   const seenRef = useRef<Set<string>>(new Set());
   const initialisedRef = useRef(false);
   const [queue, setQueue] = useState<ShownToast[]>([]);
 
-  // Seed `seen` with everything already unlocked at mount, so we don't toast
-  // past achievements on page load.
+  // The provider mounts with an empty list, then hydrates from localStorage.
+  // Seed "seen" on the first hydrated pass so saved achievements don't toast.
   useEffect(() => {
-    if (initialisedRef.current) return;
-    (state.achievements ?? []).forEach((a) => seenRef.current.add(a.id));
-    initialisedRef.current = true;
-  }, [state.achievements]);
-
-  useEffect(() => {
-    if (!initialisedRef.current) return;
-    const fresh = (state.achievements ?? []).filter(
-      (a) => !seenRef.current.has(a.id)
+    const result = partitionAchievements(
+      seenRef.current,
+      state.achievements ?? [],
+      hydrated,
+      initialisedRef.current
     );
-    if (!fresh.length) return;
-    fresh.forEach((a) => seenRef.current.add(a.id));
+    initialisedRef.current = result.initialized;
+    if (!result.markSeen.length) return;
+    result.markSeen.forEach((a) => seenRef.current.add(a.id));
+    if (!result.announce.length) return;
     setQueue((q) => [
       ...q,
-      ...fresh.map((a) => ({ ...a, shownAt: Date.now() })),
+      ...result.announce.map((a) => ({ ...a, shownAt: Date.now() })),
     ]);
-  }, [state.achievements]);
+  }, [hydrated, state.achievements]);
 
   useEffect(() => {
     if (!queue.length) return;

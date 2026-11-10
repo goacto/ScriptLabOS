@@ -34,6 +34,11 @@ export function makeGss(
   };
 }
 
+/** Bugs and viruses are logged from the dashboard, not run in the Tester. */
+export function isRunnableType(type: GssType): boolean {
+  return type !== "bug" && type !== "virus";
+}
+
 export const typeLabel: Record<GssType, string> = {
   baseline: "Baseline OS",
   update: "Update",

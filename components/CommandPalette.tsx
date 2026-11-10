@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import { makeGss } from "@/lib/gss";
+import { isRunnableType, makeGss } from "@/lib/gss";
 import { todayStr } from "@/lib/dates";
 import { exportState, resetState } from "@/lib/storage";
 import type { GssType } from "@/lib/types";
@@ -62,14 +62,6 @@ export default function CommandPalette() {
       { id: "new-bug", label: "New bug to notice", hint: "[BUG]", run: () => newScript("bug") },
       { id: "new-virus", label: "New virus to overwrite", hint: "[VIR]", run: () => newScript("virus") },
       {
-        id: "go-to-day-builder",
-        label: "Go to Day Builder (plan/complete)",
-        hint: "/day",
-        run: () => {
-          router.push("/day");
-        },
-      },
-      {
         id: "export",
         label: "Export state as JSON",
         hint: "download",
@@ -99,6 +91,7 @@ export default function CommandPalette() {
       },
     ];
     (state.scripts ?? []).forEach((s) => {
+      if (!isRunnableType(s.type)) return;
       base.push({
         id: `run-${s.id}`,
         label: `Run "${s.title}"`,

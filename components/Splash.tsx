@@ -111,7 +111,7 @@ export default function Splash() {
               [ enter ]
             </button>
             <div className="text-[10px] text-muted tracking-[0.3em]">
-              press enter or space
+              tap [ enter ], or press enter or space
             </div>
           </div>
         )}
