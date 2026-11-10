@@ -21,7 +21,10 @@ export default function MarkdownViewer({
 
   useEffect(() => {
     fetch(filePath)
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Could not load ${filePath}`);
+        return res.text();
+      })
       .then((text) => {
         setContent(text);
         setLoading(false);

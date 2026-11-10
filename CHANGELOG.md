@@ -21,6 +21,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 - The footer line reads "Growing Ourselves and Contributing To Others".
 
 ### Fixed
+- **Achievement toasts on load.** Saved achievements are marked seen only after local data hydrates, so opening the app no longer replays every unlock.
+- **Deleted scripts and packages** are removed from day-plan slots, so an hour does not stay occupied with nothing to clear.
+- **Library tags.** The tag field keeps the comma you type, so a second tag can be entered.
+- **Quick Log dates.** "Last: today" and "Last: yesterday" follow the local calendar day.
+- **Tester deep links.** A bug or virus `?id=` (or a command-palette Run) no longer opens that script in the Pomodoro runner. A 0-minute script no longer produces a broken progress bar.
+- **Planned-script counts** on the dashboard and in History include scripts that sit inside a package.
+- **Overlap warning** counts the hours involved instead of printing a fraction.
+- **Settings theme switch** starts in the dark position, matching the default theme.
+- **Analytics empty state** points at the Tester when the last 30 days have no sessions.
+- **Splash hint** says to tap `[ enter ]` as well as the keyboard keys.
 - **Workbook line after ship.** The quiet $7 workbook sentence on Day Builder stays for the rest of that local day, including after a refresh. It is still one plain link, shown only once the day is shipped.
 - **Local calendar days.** Day boundaries, streaks, daily logs, export filenames, and Analytics labels use the user's local date. They no longer flip to the next day in the evening (after 00:00 UTC).
 - **Import validation.** Invalid JSON and wrong-shaped files show the real error and leave current data alone. A backup import asks before it overwrites existing data.
@@ -46,7 +56,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and this
 
 ### Changed
 - Nav bar shows the `⌘K` hint on desktop widths and now includes "Packages" and "Profile" entries.
-- **Splash no longer auto-advances.** After the boot sequence it waits for the user to click `[ enter ]`, press `Enter`, or press `Space`. The button auto-focuses and a subtle "press enter or space" hint sits below it.
+- **Splash for a returning user.** After the boot sequence it waits for `[ enter ]` (tap, Enter, or Space). A new user still goes straight to onboarding. The hint under the button says to tap or use the keyboard.
 - **Mobile / iOS readiness.** Root layout now exports `viewport` (`device-width`, `initialScale: 1`) and `themeColor: #04070a` so iOS Safari scales correctly and tints the status bar. Apple Web App metadata (`capable: true`, `statusBarStyle: black-translucent`, title `ScriptLab`) and an SVG icon/apple-touch-icon are declared so Add-to-Home-Screen renders branded.
 
 ---

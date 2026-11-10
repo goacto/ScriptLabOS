@@ -31,7 +31,7 @@ All notable changes to **ScriptLabOS by GOACTO** are documented here.
 **Quick-Log System for Bad Habits**
 - Dashboard widget for bugs/viruses with one-click "Quick Log" buttons
 - Zero-duration tracking (no Pomodoro session required)
-- 21-day elimination: scripts move to "Eliminated" after 21 days clean
+- 21-day archive: scripts move to "Archived (21+ days clean)" after 21 days clean
 - Resurrection: log an eliminated script to bring it back
 - Shows days clean and total tallies for each negative pattern
 
@@ -75,7 +75,7 @@ All notable changes to **ScriptLabOS by GOACTO** are documented here.
 
 **Reflection Requirements**
 - Post-session reflection now mandatory (at least one field required)
-- End-of-day reflection requires all three fields (wins, challenges, tomorrow's focus)
+- End-of-day reflection requires what ran and what ran instead. Tomorrow's focus is optional.
 - Removed skip buttons to ensure conscious iteration
 
 **Bug/Virus Behavior**

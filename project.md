@@ -36,7 +36,7 @@ Three companion files are living — every PR that changes behavior, visuals, or
 ## 2. Stack
 
 - **Framework:** Next.js 15 (App Router) + React 19 + TypeScript
-- **Styling:** Tailwind CSS v4 with a Matrix-inspired token set
+- **Styling:** Tailwind CSS v3 with a Matrix-inspired token set
 - **Persistence:** Browser `localStorage` with JSON export/import; cloud-ready abstraction in `lib/storage.ts` so we can swap in Supabase/Firebase when the app goes paid
 - **State:** React Context (`ScriptLabProvider`) + `useReducer`
 - **No backend** in MVP. All logic runs client-side.

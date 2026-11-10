@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import XPBar from "./XPBar";
 import { greetingFor, isOnLocalDay, todayStr } from "@/lib/dates";
+import { fidelityPercent, plannedScriptIds } from "@/lib/plan";
 import { priorDayFocus } from "@/lib/reflection";
 
 export default function BuildStatusHUD() {
@@ -17,15 +18,9 @@ export default function BuildStatusHUD() {
   const updates = state.scripts.filter((s) => s.type === "update").length;
   const baseline = state.scripts.filter((s) => s.type === "baseline").length;
 
-  // Calculate execution fidelity for today
-  const plannedScriptIds = todaysExe?.slots
-    ? Array.from(
-        new Set(
-          todaysExe.slots
-            .filter((s) => s.scriptId)
-            .map((s) => s.scriptId as string)
-        )
-      )
+  // Packages contribute their member scripts, matching Day Builder.
+  const plannedIds = todaysExe?.slots
+    ? plannedScriptIds(todaysExe.slots, state.packages)
     : [];
 
   const completedTodayScriptIds = state.scripts
@@ -39,16 +34,10 @@ export default function BuildStatusHUD() {
     })
     .map((s) => s.id);
 
-  const executionFidelity =
-    plannedScriptIds.length > 0
-      ? Math.round(
-          (completedTodayScriptIds.filter((id) =>
-            plannedScriptIds.includes(id)
-          ).length /
-            plannedScriptIds.length) *
-            100
-        )
-      : 0;
+  const executionFidelity = fidelityPercent(plannedIds, completedTodayScriptIds);
+  const ranCount = completedTodayScriptIds.filter((id) =>
+    plannedIds.includes(id)
+  ).length;
 
   const statusColor =
     status === "complete"
@@ -78,7 +67,7 @@ export default function BuildStatusHUD() {
             {status === "complete" ? "✓ Shipped" : status}
           </div>
           <div className="text-xs text-muted mt-2">{today}</div>
-          {status === "in-progress" && plannedScriptIds.length > 0 && (
+          {status === "in-progress" && plannedIds.length > 0 && (
             <div className="mt-3">
               <div className="text-xs text-muted mb-1">Ran so far</div>
               <div className="flex items-baseline gap-2">
@@ -86,7 +75,7 @@ export default function BuildStatusHUD() {
                   {executionFidelity}%
                 </div>
                 <div className="text-xs text-muted">
-                  {completedTodayScriptIds.filter((id) => plannedScriptIds.includes(id)).length}/{plannedScriptIds.length} scripts
+                  {ranCount}/{plannedIds.length} scripts
                 </div>
               </div>
             </div>

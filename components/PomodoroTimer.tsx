@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
-import { typeIcon, typeLabel } from "@/lib/gss";
+import { isRunnableType, typeIcon, typeLabel } from "@/lib/gss";
 import { xpForRun } from "@/lib/gamification";
 import { primeChime } from "@/lib/chime";
 import { formatClock, secondsLeft } from "@/lib/timer";
@@ -38,21 +38,16 @@ export default function PomodoroTimer() {
   useEffect(() => {
     if (!ready || booted.current) return;
     booted.current = true;
-    const runnable = state.scripts.find(
-      (s) => s.type !== "bug" && s.type !== "virus"
-    );
+    const runnable = state.scripts.find((s) => isRunnableType(s.type));
     const restored =
       session &&
       session.status !== "idle" &&
       state.scripts.some((s) => s.id === session.scriptId)
         ? session.scriptId
         : null;
-    setScriptId(
-      restored ??
-        (queryId && state.scripts.some((s) => s.id === queryId) ? queryId : null) ??
-        runnable?.id ??
-        null
-    );
+    const queried = state.scripts.find((s) => s.id === queryId);
+    const queryOk = queried && isRunnableType(queried.type) ? queried.id : null;
+    setScriptId(restored ?? queryOk ?? runnable?.id ?? null);
   }, [ready, session, queryId, state.scripts]);
 
   useEffect(() => {
@@ -62,12 +57,14 @@ export default function PomodoroTimer() {
     seenQuery.current = queryId;
     if (previous === undefined) return;
     if (!queryId) return;
+    const queried = state.scripts.find((s) => s.id === queryId);
+    if (!queried || !isRunnableType(queried.type)) return;
     if (session && session.scriptId !== queryId && session.status !== "idle") {
       setScriptId(session.scriptId);
       return;
     }
     setScriptId(queryId);
-  }, [queryId, ready, session]);
+  }, [queryId, ready, session, state.scripts]);
 
   useEffect(() => {
     setChecked({});
@@ -120,9 +117,8 @@ export default function PomodoroTimer() {
     });
   };
 
-  const percent = script
-    ? 1 - remaining / (script.durationMin * 60)
-    : 0;
+  const budgetSec = (script?.durationMin ?? 0) * 60;
+  const percent = budgetSec > 0 ? 1 - remaining / budgetSec : 0;
 
   return (
     <>
@@ -282,7 +278,7 @@ export default function PomodoroTimer() {
         >
           <option value="">— choose a .gss —</option>
           {state.scripts
-            .filter((s) => s.type !== "bug" && s.type !== "virus")
+            .filter((s) => isRunnableType(s.type))
             .map((s) => (
               <option key={s.id} value={s.id}>
                 {typeIcon[s.type]} {s.title} ({s.durationMin}m) ·{" "}

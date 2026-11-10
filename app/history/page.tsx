@@ -6,6 +6,7 @@ import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
 import { typeIcon } from "@/lib/gss";
 import { calendarDaysBetween, instantToLocalDate, todayStr } from "@/lib/dates";
+import { fidelityPercent, plannedScriptIds } from "@/lib/plan";
 import { xpForRun } from "@/lib/gamification";
 import { isRelapse } from "@/lib/cleanStreak";
 import type { SessionReview } from "@/lib/types";
@@ -99,19 +100,9 @@ export default function HistoryPage() {
     state.executables
       .filter((exe) => exe.status === "complete" && exe.completedAt)
       .forEach((exe) => {
-        const plannedScripts = exe.slots
-          .filter((s) => s.scriptId)
-          .map((s) => s.scriptId as string);
+        const planned = plannedScriptIds(exe.slots, state.packages);
         const completedScripts = exe.completedScriptIds || [];
-        const executionFidelity =
-          plannedScripts.length > 0
-            ? Math.round(
-                (completedScripts.filter((id) => plannedScripts.includes(id))
-                  .length /
-                  plannedScripts.length) *
-                  100
-              )
-            : 0;
+        const executionFidelity = fidelityPercent(planned, completedScripts);
 
         events.push({
           type: "build-shipped",

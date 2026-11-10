@@ -49,6 +49,41 @@ describe("reducer: scripts", () => {
     expect(state.scripts.map((s) => s.id)).toEqual([s1.id]);
     expect(state.packages[0].scriptIds).toEqual([s1.id]);
   });
+
+  it("clears a deleted script or package from day slots so the hour can be cleared", () => {
+    const s1 = baseline({ title: "keep" });
+    const s2 = baseline({ title: "drop" });
+    const pkg: Package = {
+      id: "p1",
+      name: "morning",
+      title: "Morning",
+      scriptIds: [s1.id],
+      createdAt: "x",
+    };
+    let state: ScriptLabState = emptyState;
+    state = reducer(state, { type: "addScript", script: s1 });
+    state = reducer(state, { type: "addScript", script: s2 });
+    state = reducer(state, { type: "addPackage", pkg });
+    state = reducer(state, {
+      type: "upsertExecutable",
+      exe: {
+        id: "day",
+        date: "2026-11-10",
+        status: "draft",
+        slots: [
+          { time: "07:00", scriptId: s2.id },
+          { time: "08:00", packageId: pkg.id },
+          { time: "09:00", scriptId: s1.id },
+        ],
+      },
+    });
+    state = reducer(state, { type: "deleteScript", id: s2.id });
+    expect(state.executables[0].slots[0]).toEqual({ time: "07:00" });
+    expect(state.executables[0].slots[2].scriptId).toBe(s1.id);
+    state = reducer(state, { type: "deletePackage", id: pkg.id });
+    expect(state.executables[0].slots[1]).toEqual({ time: "08:00" });
+    expect(state.packages).toEqual([]);
+  });
 });
 
 describe("reducer: recordRun", () => {

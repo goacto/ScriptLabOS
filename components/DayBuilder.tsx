@@ -128,7 +128,11 @@ export default function DayBuilder() {
 
   const warnings = useMemo(() => {
     const w: string[] = [];
-    if (overlaps.size) w.push(`${overlaps.size / 2 || 1} overlapping slot(s)`);
+    if (overlaps.size) {
+      w.push(
+        `${overlaps.size} overlapping hour${overlaps.size === 1 ? "" : "s"}`
+      );
+    }
     if (totalMin > 24 * 60) w.push(`total ${totalMin}m exceeds 24h`);
     return w;
   }, [overlaps, totalMin]);

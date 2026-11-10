@@ -18,7 +18,7 @@ type DocType = "changelog" | "backlog" | "engineering" | null;
 export default function SettingsPage() {
   const { state, dispatch, hydrated } = useScriptLab();
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [viewingDoc, setViewingDoc] = useState<DocType>(null);
   const [showTutorial, setShowTutorial] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
@@ -30,12 +30,9 @@ export default function SettingsPage() {
   }, [hydrated, state.profile, router]);
 
   useEffect(() => {
-    // Load dark mode preference from localStorage
-    const savedMode = localStorage.getItem("theme");
-    if (savedMode === "dark") {
-      setDarkMode(true);
-      document.documentElement.classList.add("dark");
-    }
+    const isDark = localStorage.getItem("theme") !== "light";
+    setDarkMode(isDark);
+    document.documentElement.classList.toggle("dark", isDark);
   }, []);
 
   const toggleDarkMode = () => {
@@ -134,7 +131,10 @@ export default function SettingsPage() {
               </div>
             </div>
             <button
+              type="button"
               onClick={toggleDarkMode}
+              aria-pressed={darkMode}
+              aria-label="Dark mode"
               className={`relative w-14 h-7 rounded-full transition-colors ${
                 darkMode ? "bg-matrix" : "bg-matrix/30"
               }`}

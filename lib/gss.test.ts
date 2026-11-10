@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { makeGss, slugify, uid } from "./gss";
+import { isRunnableType, makeGss, slugify, uid } from "./gss";
+
+describe("isRunnableType", () => {
+  it("keeps bugs and viruses out of the Tester", () => {
+    expect(isRunnableType("baseline")).toBe(true);
+    expect(isRunnableType("bug")).toBe(false);
+    expect(isRunnableType("virus")).toBe(false);
+  });
+});
 
 describe("slugify", () => {
   it("lowercases and dasherises", () => {

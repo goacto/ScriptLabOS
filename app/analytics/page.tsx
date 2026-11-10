@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
 import { useScriptLab } from "@/lib/ScriptLabProvider";
@@ -80,6 +81,16 @@ export default function AnalyticsPage() {
       <div className="text-xs text-muted mb-6">
         Track your growth over the last 30 days
       </div>
+
+      {analytics.totalStats.totalCompleted + analytics.totalStats.totalBailed === 0 && (
+        <p className="text-sm text-muted mb-6">
+          No sessions in the last 30 days.{" "}
+          <Link href="/tester" className="text-matrix underline">
+            Run one in the Tester
+          </Link>
+          .
+        </p>
+      )}
 
       {/* Summary Cards */}
       <div className="grid md:grid-cols-4 gap-4 mb-6">
